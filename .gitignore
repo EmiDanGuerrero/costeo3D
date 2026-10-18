@@ -1,5 +1,12 @@
 # Compiled class file
 *.class
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
 
 # Log file
 *.log
@@ -22,3 +29,46 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+.factorypath
+.apt_generated/
+.apt_generated_tests/
+bin/
+*.launch
+.externalToolBuilders/
+.recommenders/
+
+# Local configuration / secrets
+.env
+.env.*
+*.local.properties
+
+# Do not ignore example configuration files
+!.env.example
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux / editors
+*~
+.directory
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# IDE-independent generated output
+out/
+build/
