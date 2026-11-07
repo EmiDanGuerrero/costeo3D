@@ -17,11 +17,16 @@ public class Spool {
 
     public Spool(Integer id, Material material, String color,
             BigDecimal initialWeight, BigDecimal currentWeight, boolean active) {
+        if (initialWeight == null || initialWeight.signum() <= 0) {
+            throw new IllegalArgumentException(
+                    "Initial weight must be greater than zero.");
+        }
+
         this.id = id;
-        this.material = material;
-        this.color = color;
+        setMaterial(material);
+        setColor(color);
         this.initialWeight = initialWeight;
-        this.currentWeight = currentWeight;
+        updateCurrentWeight(currentWeight);
         this.active = active;
     }
 
@@ -50,14 +55,27 @@ public class Spool {
     }
 
     public void setMaterial(Material material) {
+        if (material == null) {
+            throw new IllegalArgumentException("Material cannot be null.");
+        }
         this.material = material;
     }
 
     public void setColor(String color) {
+        if (color == null) {
+            throw new IllegalArgumentException("Color cannot be null.");
+        }
         this.color = color;
     }
 
     public void updateCurrentWeight(BigDecimal currentWeight) {
+        if (currentWeight == null
+                || currentWeight.signum() < 0
+                || currentWeight.compareTo(initialWeight) > 0) {
+            throw new IllegalArgumentException(
+                    "Current weight must be between zero and initial weight.");
+        }
+
         this.currentWeight = currentWeight;
     }
 

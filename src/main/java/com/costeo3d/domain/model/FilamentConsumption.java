@@ -2,6 +2,8 @@ package com.costeo3d.domain.model;
 
 import java.math.BigDecimal;
 
+import com.costeo3d.domain.validation.ValidationUtils;
+
 public class FilamentConsumption {
 
     private Integer id;
@@ -18,10 +20,10 @@ public class FilamentConsumption {
     public FilamentConsumption(Integer id, PrintJob printJob, Spool spool,
             BigDecimal plannedGrams, BigDecimal consumedGrams) {
         this.id = id;
-        this.printJob = printJob;
-        this.spool = spool;
-        this.plannedGrams = plannedGrams;
-        this.consumedGrams = consumedGrams;
+        this.printJob = ValidationUtils.requireNotNull(printJob, "Print job");
+        setSpool(spool);
+        setPlannedGrams(plannedGrams);
+        updateConsumedGrams(consumedGrams);
     }
 
     public Integer getId() {
@@ -45,14 +47,18 @@ public class FilamentConsumption {
     }
 
     public void setSpool(Spool spool) {
-        this.spool = spool;
+        this.spool = ValidationUtils.requireNotNull(spool, "Spool");
     }
 
     public void setPlannedGrams(BigDecimal plannedGrams) {
+        if (plannedGrams != null) {
+            ValidationUtils.requireNonNegative(plannedGrams, "Planned grams");
+        }
         this.plannedGrams = plannedGrams;
     }
 
     public void updateConsumedGrams(BigDecimal consumedGrams) {
+        ValidationUtils.requireNonNegative(consumedGrams, "Consumed grams");
         this.consumedGrams = consumedGrams;
     }
 }

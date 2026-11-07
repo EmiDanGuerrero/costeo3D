@@ -23,11 +23,11 @@ public class Model3D implements Quotable {
             String sourcePlatform, BigDecimal estimatedGrams,
             int estimatedPrintTimeMinutes, boolean active) {
         this.id = id;
-        this.name = name;
+        setName(name);
         this.referenceImage = referenceImage;
         this.sourcePlatform = sourcePlatform;
-        this.estimatedGrams = estimatedGrams;
-        this.estimatedPrintTimeMinutes = estimatedPrintTimeMinutes;
+        setEstimatedGrams(estimatedGrams);
+        setEstimatedPrintTimeMinutes(estimatedPrintTimeMinutes);
         this.active = active;
     }
 
@@ -62,6 +62,9 @@ public class Model3D implements Quotable {
     }
 
     public void setName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Model name cannot be null.");
+        }
         this.name = name;
     }
 
@@ -74,10 +77,18 @@ public class Model3D implements Quotable {
     }
 
     public void setEstimatedGrams(BigDecimal estimatedGrams) {
+        if (estimatedGrams == null || estimatedGrams.signum() <= 0) {
+            throw new IllegalArgumentException(
+                    "Estimated grams must be greater than zero.");
+        }
         this.estimatedGrams = estimatedGrams;
     }
 
     public void setEstimatedPrintTimeMinutes(int estimatedPrintTimeMinutes) {
+        if (estimatedPrintTimeMinutes <= 0) {
+            throw new IllegalArgumentException(
+                    "Estimated print time must be greater than zero.");
+        }
         this.estimatedPrintTimeMinutes = estimatedPrintTimeMinutes;
     }
 

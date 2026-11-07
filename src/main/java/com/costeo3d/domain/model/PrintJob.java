@@ -33,11 +33,12 @@ public class PrintJob {
         this.id = id;
         this.order = order;
         this.model = model;
-        this.createdAt = createdAt;
+        this.createdAt = ValidationUtils.requireNotNull(createdAt, "Creation date");
         this.startedAt = startedAt;
+        validateFinishDate(startedAt, finishedAt);
         this.finishedAt = finishedAt;
-        this.status = status;
-        this.estimatedPrintTimeMinutes = estimatedPrintTimeMinutes;
+        this.status = ValidationUtils.requireNotNull(status, "Print job status");
+        setEstimatedPrintTimeMinutes(estimatedPrintTimeMinutes);
     }
 
     public Integer getId() {
@@ -81,48 +82,53 @@ public class PrintJob {
     }
 
     public void setEstimatedPrintTimeMinutes(int estimatedPrintTimeMinutes) {
+        if (estimatedPrintTimeMinutes <= 0) {
+            throw new IllegalArgumentException(
+                    "Estimated print time must be greater than zero.");
+        }
         this.estimatedPrintTimeMinutes = estimatedPrintTimeMinutes;
     }
 
     public void start(LocalDateTime startedAt)
             throws InvalidStateTransitionException {
-
         if (status != PrintJobStatus.PENDING) {
             throw new InvalidStateTransitionException(
                     "Only a pending print job can be started.");
         }
-
-        this.startedAt = ValidationUtils.requireNotNull(
-                startedAt, "Start date");
-
+        this.startedAt = ValidationUtils.requireNotNull(startedAt, "Start date");
         status = PrintJobStatus.IN_PROGRESS;
     }
 
     public void complete(LocalDateTime finishedAt)
             throws InvalidStateTransitionException {
-
         if (status != PrintJobStatus.IN_PROGRESS) {
             throw new InvalidStateTransitionException(
                     "Only a print job in progress can be completed.");
         }
-
-        this.finishedAt = ValidationUtils.requireNotNull(
-                finishedAt, "Finish date");
-
+        LocalDateTime date = ValidationUtils.requireNotNull(finishedAt, "Finish date");
+        validateFinishDate(startedAt, date);
+        this.finishedAt = date;
         status = PrintJobStatus.COMPLETED;
     }
 
     public void fail(LocalDateTime finishedAt)
             throws InvalidStateTransitionException {
-
         if (status != PrintJobStatus.IN_PROGRESS) {
             throw new InvalidStateTransitionException(
                     "Only a print job in progress can fail.");
         }
-
-        this.finishedAt = ValidationUtils.requireNotNull(
-                finishedAt, "Finish date");
-
+        LocalDateTime date = ValidationUtils.requireNotNull(finishedAt, "Finish date");
+        validateFinishDate(startedAt, date);
+        this.finishedAt = date;
         status = PrintJobStatus.FAILED;
+    }
+
+    private static void validateFinishDate(
+            LocalDateTime startedAt, LocalDateTime finishedAt) {
+        if (startedAt != null && finishedAt != null
+                && finishedAt.isBefore(startedAt)) {
+            throw new IllegalArgumentException(
+                    "Finish date cannot be before start date.");
+        }
     }
 }

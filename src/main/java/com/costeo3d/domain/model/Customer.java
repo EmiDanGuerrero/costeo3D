@@ -15,7 +15,7 @@ public class Customer {
     public Customer(Integer id, String name, String phone,
             String email, boolean active) {
         this.id = id;
-        this.name = name;
+        setName(name);
         this.phone = phone;
         this.email = email;
         this.active = active;
@@ -42,6 +42,9 @@ public class Customer {
     }
 
     public void setName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Customer name cannot be null.");
+        }
         this.name = name;
     }
 
