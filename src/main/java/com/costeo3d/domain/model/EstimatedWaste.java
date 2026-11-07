@@ -65,11 +65,10 @@ public class EstimatedWaste {
 
     private void validateLayers(int totalLayers, int failureLayer) {
         ValidationUtils.requirePositive(totalLayers, "Total layers");
-        ValidationUtils.requirePositive(failureLayer, "Failure layer");
 
-        if (failureLayer > totalLayers) {
+        if (failureLayer < 0 || failureLayer > totalLayers) {
             throw new IllegalArgumentException(
-                    "Failure layer cannot exceed total layers.");
+                    "Failure layer must be between zero and total layers.");
         }
     }
 }
