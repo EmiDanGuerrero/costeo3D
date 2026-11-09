@@ -256,6 +256,7 @@ CREATE TABLE trabajo_impresion (
     id_trabajo INT AUTO_INCREMENT,
     id_pedido INT NULL,
     id_modelo INT NULL,
+    id_trabajo_origen INT NULL,
     fecha_creacion DATETIME NOT NULL,
     fecha_inicio DATETIME NULL,
     fecha_fin DATETIME NULL,
@@ -281,6 +282,15 @@ CREATE TABLE trabajo_impresion (
         REFERENCES modelo_3d(id_modelo)
         ON UPDATE CASCADE
         ON DELETE SET NULL,
+
+    CONSTRAINT fk_trabajo_origen
+        FOREIGN KEY (id_trabajo_origen)
+        REFERENCES trabajo_impresion(id_trabajo)
+        ON UPDATE RESTRICT
+        ON DELETE SET NULL,
+
+    CONSTRAINT uq_trabajo_origen
+        UNIQUE (id_trabajo_origen),
 
     CONSTRAINT chk_trabajo_tiempo
         CHECK (tiempo_estimado_minutos > 0),
