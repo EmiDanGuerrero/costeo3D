@@ -71,6 +71,21 @@ public class CatalogService {
         return spoolDao.update(spool);
     }
 
+    /** Edita metadatos de la bobina sin alterar el stock real de MySQL. */
+    public boolean updateSpoolColor(int spoolId, String color) {
+        return spoolDao.updateColor(spoolId, color);
+    }
+
+    /** Reactiva una bobina conservando su stock y su historial. */
+    public boolean activateSpool(int spoolId) {
+        return spoolDao.activate(spoolId);
+    }
+
+    /** Desactiva la bobina sin eliminar el historial ni modificar pesos. */
+    public boolean deactivateSpool(int spoolId) {
+        return spoolDao.deactivate(spoolId);
+    }
+
     // 3D models
     public Model3D createModel3D(Model3D model) {
         return model3DDao.insert(model);

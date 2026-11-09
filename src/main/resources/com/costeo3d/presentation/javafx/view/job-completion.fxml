@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.costeo3d.presentation.javafx.controller.JobCompletionController"
+            style="-fx-background-color: #f5f7fb;">
+    <top>
+        <VBox spacing="7" styleClass="welcome-panel">
+            <padding><Insets top="18" right="22" bottom="17" left="22"/></padding>
+            <Label text="FINALIZAR IMPRESIÓN" styleClass="eyebrow"/>
+            <Label fx:id="jobTitleLabel" text="Trabajo" styleClass="section-title"/>
+            <Label text="Se descontará el filamento calculado en el presupuesto. Los gramos no se editan al finalizar una impresión exitosa."
+                   styleClass="section-description" wrapText="true"/>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fx:id="formScroll" fitToWidth="true" hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED" vvalue="0.0"
+                    style="-fx-background: transparent; -fx-background-color: transparent;">
+            <content>
+                <VBox spacing="15" style="-fx-padding: 17 22 17 22;">
+                    <VBox spacing="12" styleClass="catalog-panel">
+                        <padding><Insets top="15" right="16" bottom="15" left="16"/></padding>
+                        <Label text="Consumo aprobado del presupuesto" styleClass="catalog-heading"/>
+                        <Label fx:id="sourceLabel" text="Cargando gramos aprobados..."
+                               styleClass="section-description" wrapText="true"/>
+                        <Label fx:id="summaryLabel" text="Los gramos se toman del presupuesto aprobado."
+                               styleClass="catalog-status" wrapText="true"/>
+                        <Label text="Elegí la bobina que realmente se utilizó para cada material. Las cantidades son de solo lectura."
+                               styleClass="section-description" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="12" styleClass="catalog-panel">
+                        <padding><Insets top="15" right="16" bottom="15" left="16"/></padding>
+                        <Label text="Bobinas utilizadas" styleClass="catalog-heading"/>
+                        <Label fx:id="stockStatusLabel" text="Consultando bobinas..."
+                               styleClass="section-description" wrapText="true"/>
+                        <VBox fx:id="assignmentsBox" spacing="12"/>
+                    </VBox>
+                    <Label text="Al confirmar, el trabajo se finalizará y MySQL verificará y descontará el stock de cada bobina en una única transacción."
+                           styleClass="bottom-hint" wrapText="true"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10"
+              style="-fx-padding: 15 22 15 22; -fx-background-color: white; -fx-border-color: #e3e9f0; -fx-border-width: 1 0 0 0;">
+            <ProgressIndicator fx:id="progressIndicator" visible="false" managed="false"
+                               prefWidth="22" prefHeight="22" maxWidth="22" maxHeight="22"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="cancelButton" text="Cancelar" onAction="#cancel"
+                    styleClass="secondary-action"/>
+            <Button fx:id="completeButton" text="Finalizar y descontar stock"
+                    onAction="#completeJob" disable="true" styleClass="home-action"/>
+        </HBox>
+    </bottom>
+</BorderPane>

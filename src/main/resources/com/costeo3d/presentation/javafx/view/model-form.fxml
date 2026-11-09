@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.costeo3d.presentation.javafx.controller.ModelFormController"
+      spacing="11" prefWidth="540" styleClass="material-form">
+    <padding><Insets top="23" right="28" bottom="23" left="28"/></padding>
+    <Label text="CATÁLOGOS" styleClass="eyebrow"/>
+    <Label fx:id="formTitleLabel" text="Nuevo modelo 3D" styleClass="form-title"/>
+    <Label fx:id="formDescriptionLabel" text="Registrá un modelo con sus estimaciones. La imagen es opcional."
+           wrapText="true" styleClass="form-description"/>
+    <VBox spacing="5">
+        <Label text="Nombre" styleClass="form-label"/>
+        <TextField fx:id="nameField" promptText="Ej.: Soporte para herramientas" styleClass="form-field"/>
+    </VBox>
+    <VBox spacing="7">
+        <Label text="Imagen del modelo (opcional)" styleClass="form-label"/>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Button fx:id="chooseImageButton" text="Seleccionar imagen..." onAction="#chooseImage"
+                    styleClass="secondary-action"/>
+            <Button fx:id="removeImageButton" text="Quitar" onAction="#removeImage"
+                    disable="true" styleClass="secondary-action"/>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <StackPane minHeight="142" prefHeight="142" maxHeight="142"
+                   styleClass="model-form-image-preview">
+            <Label fx:id="previewPlaceholder" text="Sin imagen seleccionada"
+                   styleClass="model-form-preview-placeholder"/>
+            <ImageView fx:id="previewImage" fitWidth="420" fitHeight="142"
+                       preserveRatio="true" smooth="true" visible="false"/>
+        </StackPane>
+        <Label fx:id="selectedImageLabel" text="Ninguna imagen seleccionada (opcional)"
+               maxWidth="480" styleClass="form-hint"/>
+        <Label text="PNG/JPG · hasta 12 MB · copia local automática al guardar."
+               styleClass="form-hint"/>
+    </VBox>
+    <VBox spacing="5">
+        <Label text="Plataforma de origen (opcional)" styleClass="form-label"/>
+        <TextField fx:id="platformField" promptText="Ej.: Printables" styleClass="form-field"/>
+    </VBox>
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Gramos estimados" styleClass="form-label"/>
+            <TextField fx:id="gramsField" promptText="Ej.: 75,50" styleClass="form-field"/>
+        </VBox>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Tiempo estimado (minutos)" styleClass="form-label"/>
+            <TextField fx:id="minutesField" promptText="Ej.: 120" styleClass="form-field"/>
+        </VBox>
+    </HBox>
+    <Label text="Gramos: hasta 2 decimales. Tiempo: minutos enteros positivos."
+           wrapText="true" styleClass="form-hint"/>
+    <Label fx:id="feedbackLabel" text="" wrapText="true" styleClass="form-feedback"/>
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="cancelButton" text="Cancelar" onAction="#cancel"
+                styleClass="secondary-action"/>
+        <Button fx:id="saveButton" text="Guardar" onAction="#saveModel"
+                defaultButton="true" styleClass="home-action"/>
+    </HBox>
+</VBox>

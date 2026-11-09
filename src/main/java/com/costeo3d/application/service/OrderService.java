@@ -3,6 +3,7 @@ package com.costeo3d.application.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.costeo3d.domain.enums.OrderStatus;
 import com.costeo3d.domain.enums.PrintJobStatus;
 import com.costeo3d.domain.enums.QuoteStatus;
 import com.costeo3d.domain.exception.BusinessRuleException;
@@ -98,6 +99,22 @@ public class OrderService {
         ValidationUtils.requireNotNull(order, "Order");
 
         order.deliver();
+    }
+
+
+    /** Cancels only a pending order whose print jobs have not started. */
+    public void cancelPending(Order order) throws BusinessRuleException {
+        ValidationUtils.requireNotNull(order, "Order");
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new BusinessValidationException(
+                    "Solo se pueden cancelar pedidos pendientes desde Pedidos.");
+        }
+        if (order.getPrintJobs().stream()
+                .anyMatch(job -> job.getStatus() != PrintJobStatus.PENDING)) {
+            throw new BusinessValidationException(
+                    "No se puede cancelar: alguno de sus trabajos ya comenzó.");
+        }
+        order.cancel();
     }
 
     private boolean hasOrderForQuote(

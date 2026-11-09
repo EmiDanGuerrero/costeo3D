@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.costeo3d.presentation.javafx.controller.PricingSettingsController" fitToWidth="true"
+            hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;">
+    <content>
+        <VBox spacing="16" styleClass="catalogs-page">
+            <VBox spacing="9" styleClass="welcome-panel">
+                <padding><Insets top="23" right="28" bottom="23" left="28"/></padding>
+                <Label text="CONFIGURACIÓN" styleClass="eyebrow"/>
+                <Label text="Parámetros de costeo" styleClass="section-title"/>
+                <Label text="Guardá tarifas y costos estimados. No cambia presupuestos ya emitidos."
+                       styleClass="section-description" wrapText="true"/>
+            </VBox>
+            <VBox spacing="13" styleClass="catalog-panel">
+                <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
+                <Label text="Energía eléctrica" styleClass="catalog-heading"/>
+                <GridPane hgap="15" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+                    <Label text="Tarifa ($/kWh)" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <Label text="Potencia promedio de la impresora (W)" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <TextField fx:id="electricityRateField" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-field"/>
+                    <TextField fx:id="averageWattsField" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-field"/>
+                </GridPane>
+                <Label text="Estos valores representan consumo y tarifa aproximados. IVA y cargos fijos no se añaden automáticamente."
+                       styleClass="bottom-hint" wrapText="true"/>
+            </VBox>
+            <VBox spacing="13" styleClass="catalog-panel">
+                <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
+                <Label text="Impresora y mantenimiento" styleClass="catalog-heading"/>
+                <GridPane hgap="15" vgap="9">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+                    <Label text="Valor de reposición de la impresora ($)" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <Label text="Vida útil estimada (horas totales)" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <TextField fx:id="printerValueField" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-field"/>
+                    <TextField fx:id="usefulHoursField" promptText="A definir" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-field"/>
+                    <Label text="Mantenimiento y repuestos ($/año)" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                    <Label text="Horas estimadas de impresión por año" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="form-label"/>
+                    <TextField fx:id="maintenanceYearField" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-field"/>
+                    <TextField fx:id="printHoursYearField" promptText="A definir" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="form-field"/>
+                </GridPane>
+                <Label text="Dejamos ambas estimaciones de horas vacías hasta que decidas los supuestos. No inventamos un costo horario."
+                       styleClass="bottom-hint" wrapText="true"/>
+            </VBox>
+            <VBox spacing="12" styleClass="catalog-panel">
+                <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
+                <Label text="Política comercial" styleClass="catalog-heading"/>
+                <Label text="Margen general por defecto (%)" styleClass="form-label"/>
+                <TextField fx:id="defaultMarginField" promptText="A definir (ej.: 20)" maxWidth="240" styleClass="form-field"/>
+                <Label text="Normal utiliza el margen general. Llavero y Grande pueden usar su propio margen; si lo dejás vacío, heredan el general."
+                       styleClass="bottom-hint" wrapText="true"/>
+                <GridPane hgap="15" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+                    <Label text="Margen Llavero (%)" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <Label text="Margen Grande (%)" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <TextField fx:id="keychainMarginField" promptText="Vacío = margen general"
+                               GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-field"/>
+                    <TextField fx:id="largeMarginField" promptText="Vacío = margen general"
+                               GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-field"/>
+                </GridPane>
+                <Label text="Precio mínimo por llavero ($/unidad, opcional)" styleClass="form-label"/>
+                <TextField fx:id="keychainMinimumField" promptText="Sin mínimo si queda vacío"
+                           maxWidth="240" styleClass="form-field"/>
+                <Label text="El mínimo se aplica al precio unitario calculado de Llavero solo si supera el cálculo normal. En modo manual no se aplica automáticamente."
+                       styleClass="bottom-hint" wrapText="true"/>
+            </VBox>
+            <VBox spacing="12" styleClass="catalog-panel">
+                <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
+                <Label text="Vista previa por hora de impresión" styleClass="catalog-heading"/>
+                <GridPane hgap="10" vgap="9">
+                    <Label text="Energía:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <Label fx:id="electricityPreviewLabel" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="catalog-status"/>
+                    <Label text="Amortización del equipo:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                    <Label fx:id="depreciationPreviewLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="catalog-status"/>
+                    <Label text="Mantenimiento y repuestos:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                    <Label fx:id="maintenancePreviewLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="catalog-status"/>
+                    <Separator GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+                    <Label text="Costo horario total:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="form-label"/>
+                    <Label fx:id="totalPreviewLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="catalog-heading"/>
+                </GridPane>
+                <HBox alignment="CENTER_RIGHT" spacing="12">
+                    <Label fx:id="statusLabel" text="" wrapText="true" styleClass="catalog-status" HBox.hgrow="ALWAYS"/>
+                    <Button text="Guardar configuración" onAction="#save" styleClass="home-action"/>
+                </HBox>
+                <Label fx:id="locationLabel" text="" wrapText="true" styleClass="bottom-hint"/>
+            </VBox>
+        </VBox>
+    </content>
+</ScrollPane>

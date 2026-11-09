@@ -120,6 +120,67 @@ public final class JdbcSpoolDao implements SpoolDao {
             throw persistenceFailure("update", e);
         }
     }
+    /** Solo actualiza el color de una bobina activa; no escribe ningún peso. */
+    @Override
+    public boolean updateColor(int spoolId, String color) {
+        if (spoolId <= 0 || color == null || color.isBlank() || color.length() > 60) {
+            throw new IllegalArgumentException("Invalid spool ID or color.");
+        }
+        String sql = "UPDATE bobina SET color = ? WHERE id_bobina = ? AND activo = 1";
+        try (Connection connection = connectionFactory.openConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, color);
+            statement.setInt(2, spoolId);
+            if (statement.executeUpdate() > 0) return true;
+            // MySQL puede informar cero filas modificadas si el color no cambió.
+            return existsActive(connection, spoolId);
+        } catch (SQLException e) {
+            throw persistenceFailure("updateColor", e);
+        }
+    }
+
+    /** Reactivación: actualiza solo activo, sin tocar stock ni relaciones. */
+    @Override
+    public boolean activate(int spoolId) {
+        if (spoolId <= 0) {
+            throw new IllegalArgumentException("Invalid spool ID.");
+        }
+        String sql = "UPDATE bobina SET activo = 1 WHERE id_bobina = ? AND activo = 0";
+        try (Connection connection = connectionFactory.openConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, spoolId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw persistenceFailure("activate", e);
+        }
+    }
+
+    /** Baja lógica: jamás toca peso_actual ni peso_inicial. */
+    @Override
+    public boolean deactivate(int spoolId) {
+        if (spoolId <= 0) {
+            throw new IllegalArgumentException("Invalid spool ID.");
+        }
+        String sql = "UPDATE bobina SET activo = 0 WHERE id_bobina = ? AND activo = 1";
+        try (Connection connection = connectionFactory.openConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, spoolId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw persistenceFailure("deactivate", e);
+        }
+    }
+
+    private static boolean existsActive(Connection connection, int spoolId) throws SQLException {
+        try (PreparedStatement check = connection.prepareStatement(
+                "SELECT 1 FROM bobina WHERE id_bobina = ? AND activo = 1")) {
+            check.setInt(1, spoolId);
+            try (ResultSet rows = check.executeQuery()) {
+                return rows.next();
+            }
+        }
+    }
+
     private static int materialIdOf(Spool spool) {
         if (spool.getMaterial() == null || spool.getMaterial().getId() == null) {
             throw new IllegalArgumentException("Spool material must have a persisted ID.");

@@ -1,0 +1,441 @@
+/* Tema base de la interfaz JavaFX. Las reglas usan propiedades -fx-, no CSS web puro. */
+.app-root {
+    -fx-background-color: #f5f7fb;
+    -fx-font-family: "Segoe UI";
+}
+
+.sidebar {
+    -fx-background-color: #182438;
+}
+
+.brand-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.brand-subtitle {
+    -fx-text-fill: #9cb0ce;
+    -fx-font-size: 12px;
+}
+
+.sidebar-separator {
+    -fx-padding: 20px 0 15px 0;
+}
+
+.sidebar-heading {
+    -fx-text-fill: #7993b5;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 10px 9px 10px;
+}
+
+.nav-button {
+    -fx-alignment: center-left;
+    -fx-text-fill: #d9e4f4;
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 12px;
+    -fx-font-size: 12.5px;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #293951;
+}
+
+.nav-button-active,
+.nav-button-active:hover {
+    -fx-background-color: #355c88;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.sidebar-footer {
+    -fx-text-fill: #7993b5;
+    -fx-font-size: 11px;
+    -fx-padding: 12px 10px 0 10px;
+}
+
+.main-content {
+    -fx-background-color: #f5f7fb;
+}
+
+.topbar {
+    -fx-padding: 0 0 12px 0;
+}
+
+.topbar-title {
+    -fx-text-fill: #354760;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.topbar-caption {
+    -fx-text-fill: #76879f;
+    -fx-font-size: 12px;
+}
+
+.welcome-panel {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14px;
+    -fx-border-color: #e0e6f0;
+    -fx-border-radius: 14px;
+}
+
+.eyebrow {
+    -fx-text-fill: #527eaf;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.section-title {
+    -fx-text-fill: #1d2c42;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.section-description {
+    -fx-text-fill: #52647d;
+    -fx-font-size: 15px;
+}
+
+.panel-separator {
+    -fx-padding: 15px 0 12px 0;
+}
+
+.section-status {
+    -fx-text-fill: #4f779e;
+    -fx-font-size: 12px;
+}
+
+.bottom-hint {
+    -fx-text-fill: #8390a3;
+    -fx-font-size: 12px;
+}
+
+/* Acción de Inicio: reutilizable para futuros accesos principales. */
+.home-action {
+    -fx-background-color: #355c88;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 16px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.home-action:hover {
+    -fx-background-color: #28496f;
+}
+
+/* E9.4: tabla de materiales, conservando el tema general. */
+.catalogs-page {
+    -fx-fill-width: true;
+}
+
+.catalog-panel {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14px;
+    -fx-border-color: #e0e6f0;
+    -fx-border-radius: 14px;
+}
+
+.catalog-heading {
+    -fx-text-fill: #1d2c42;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.catalog-status {
+    -fx-text-fill: #59708b;
+    -fx-font-size: 12px;
+}
+
+.catalog-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e6f0;
+    -fx-border-radius: 6px;
+}
+
+.catalog-table .column-header-background {
+    -fx-background-color: #edf3fa;
+}
+
+.catalog-table .column-header,
+.catalog-table .filler {
+    -fx-background-color: transparent;
+    -fx-size: 38px;
+}
+
+.catalog-table .table-row-cell:filled:selected {
+    -fx-background-color: #dceafb;
+}
+
+.catalog-table .table-row-cell:filled:selected .text {
+    -fx-fill: #1d2c42;
+}
+
+/* E10.1: acciones de catálogo y formulario modal de materiales. */
+.secondary-action {
+    -fx-background-color: #edf3fa;
+    -fx-text-fill: #244363;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.secondary-action:hover {
+    -fx-background-color: #dce8f5;
+}
+
+.material-form {
+    -fx-background-color: #ffffff;
+}
+
+.form-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1d2c42;
+}
+
+.form-description {
+    -fx-text-fill: #52647d;
+    -fx-font-size: 13px;
+}
+
+.form-label {
+    -fx-text-fill: #1d2c42;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.form-field {
+    -fx-pref-height: 38px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ccd9e8;
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+    -fx-padding: 8px 10px;
+}
+
+.form-field:focused {
+    -fx-border-color: #355c88;
+}
+
+.form-hint {
+    -fx-text-fill: #8390a3;
+    -fx-font-size: 11px;
+}
+
+.form-feedback {
+    -fx-text-fill: #b64242;
+    -fx-font-size: 12px;
+}
+
+/* E10.1: baja lógica reversible. Se evita el rojo de "eliminar" porque no borra registros. */
+.danger-action {
+    -fx-background-color: #fff0ef;
+    -fx-text-fill: #a53f36;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.danger-action:hover {
+    -fx-background-color: #f9dedb;
+}
+
+.danger-action:disabled {
+    -fx-opacity: 0.45;
+}
+
+/* E10.2: búsqueda, filtros y paginación de materiales. */
+.catalog-filters {
+    -fx-padding: 6px 0 2px 0;
+}
+
+.catalog-filter-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ccd9e8;
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+    -fx-pref-height: 38px;
+}
+
+.catalog-filter-combo:focused {
+    -fx-border-color: #355c88;
+}
+
+.catalog-pagination-hint {
+    -fx-text-fill: #8390a3;
+    -fx-font-size: 11px;
+}
+
+.catalog-page-label {
+    -fx-text-fill: #354760;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-min-width: 94px;
+    -fx-alignment: center;
+}
+
+
+/* E10.4.1: navegación directa con subcatálogos e íconos vectoriales. */
+.brand-block {
+    -fx-padding: 3px 0 3px 0;
+}
+
+.sidebar-group-heading {
+    -fx-text-fill: #90a9c7;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 14px 10px 4px 10px;
+}
+
+.sidebar-group-separator {
+    -fx-padding: 10px 0 9px 0;
+}
+
+.nav-button-child {
+    -fx-padding: 10px 12px 10px 25px;
+}
+
+.nav-icon {
+    -fx-fill: transparent;
+    -fx-stroke: #a9c0de;
+    -fx-stroke-width: 1.7px;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+
+.nav-button:hover .nav-icon,
+.nav-button-active .nav-icon,
+.nav-button-active:hover .nav-icon {
+    -fx-stroke: #ffffff;
+}
+
+
+/* E10.4.2 — Galería visual de modelos 3D. */
+.models-scroll-root,
+.models-scroll-root > .viewport {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.models-scroll-root {
+    -fx-padding: 0;
+}
+.model-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dce5f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 11px;
+    -fx-background-radius: 11px;
+    -fx-padding: 0;
+    -fx-alignment: top-left;
+    -fx-cursor: hand;
+}
+.model-card:hover {
+    -fx-border-color: #85a7ca;
+    -fx-background-color: #ffffff;
+}
+.model-card:selected,
+.model-card:selected:hover {
+    -fx-border-color: #355c88;
+    -fx-border-width: 2px;
+    -fx-background-color: #f4f9ff;
+}
+.model-card:focused {
+    -fx-border-color: #355c88;
+}
+.model-card-content {
+    -fx-background-color: transparent;
+}
+.model-cover {
+    -fx-background-color: #e9f0f8;
+    -fx-background-radius: 10px 10px 0 0;
+}
+.model-image-placeholder {
+    -fx-alignment: center;
+}
+.model-image-icon {
+    -fx-fill: transparent;
+    -fx-stroke: #91aac7;
+    -fx-stroke-width: 2px;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+.model-no-image-label {
+    -fx-text-fill: #7d93ad;
+    -fx-font-size: 12px;
+}
+.model-state-badge {
+    -fx-background-radius: 14px;
+    -fx-padding: 4px 9px;
+    -fx-font-size: 10.5px;
+    -fx-font-weight: bold;
+}
+.model-state-active {
+    -fx-background-color: #e2f4e6;
+    -fx-text-fill: #26713a;
+}
+.model-state-inactive {
+    -fx-background-color: #e6e9ed;
+    -fx-text-fill: #586374;
+}
+.model-card-details {
+    -fx-padding: 11px 12px 12px 12px;
+    -fx-alignment: top-left;
+}
+.model-card-title {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1d2c42;
+    -fx-font-weight: bold;
+}
+.model-card-platform {
+    -fx-font-size: 12px;
+    -fx-text-fill: #547aa4;
+}
+.model-card-metrics {
+    -fx-padding: 6px 0 0 0;
+}
+.model-card-metrics .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #354760;
+}
+.model-card-id {
+    -fx-font-size: 10px;
+    -fx-text-fill: #8390a3;
+}
+.models-empty-state {
+    -fx-background-color: #f4f7fb;
+    -fx-background-radius: 10px;
+    -fx-border-color: #dce5f0;
+    -fx-border-radius: 10px;
+    -fx-padding: 35px;
+    -fx-min-height: 135px;
+}
+.models-empty-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1d2c42;
+}
+.models-empty-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #71849b;
+}
+
+
+/* E10.4.3 — Vista previa de imagen elegida mediante FileChooser. */
+.model-form-image-preview {
+    -fx-background-color: #eef3fa;
+    -fx-background-radius: 8px;
+    -fx-border-color: #d6e2ef;
+    -fx-border-radius: 8px;
+}
+.model-form-preview-placeholder {
+    -fx-text-fill: #7d93ad;
+    -fx-font-size: 12px;
+}

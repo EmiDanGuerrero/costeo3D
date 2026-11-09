@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fitToWidth="true" hbarPolicy="NEVER"
+            fx:controller="com.costeo3d.presentation.javafx.controller.QuoteFormController">
+  <content>
+    <VBox spacing="13" styleClass="catalogs-page">
+      <padding><Insets top="22" right="26" bottom="22" left="26"/></padding>
+      <VBox spacing="6" styleClass="welcome-panel">
+        <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+        <Label text="PRESUPUESTOS" styleClass="eyebrow"/>
+        <Label text="Nuevo presupuesto" styleClass="section-title"/>
+        <Label text="Un concepto, varios materiales y cálculo del precio unitario con CostCalculator."
+               styleClass="section-description" wrapText="true"/>
+      </VBox>
+      <VBox spacing="11" styleClass="catalog-panel">
+        <padding><Insets top="16" right="19" bottom="16" left="19"/></padding>
+        <Label text="Cliente y modelo" styleClass="catalog-heading"/>
+        <Label fx:id="catalogHintLabel" text="Cargando opciones..."
+               styleClass="catalog-status" wrapText="true"/>
+        <Label text="Cliente activo *" styleClass="form-label"/>
+        <ComboBox fx:id="customerCombo" maxWidth="Infinity" promptText="Seleccioná un cliente"
+                  styleClass="catalog-filter-combo"/>
+        <Label text="Modelo 3D (opcional)" styleClass="form-label"/>
+        <HBox spacing="8">
+          <ComboBox fx:id="modelCombo" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                    promptText="Sin modelo: descripción manual"
+                    styleClass="catalog-filter-combo"/>
+          <Button fx:id="clearModelButton" text="Quitar modelo" onAction="#clearModel"
+                  styleClass="secondary-action"/>
+        </HBox>
+        <Label text="Si elegís un modelo, se precargan sus gramos y tiempo estimados. Podés ajustarlos."
+               styleClass="catalog-status" wrapText="true"/>
+      </VBox>
+      <VBox spacing="10" styleClass="catalog-panel">
+        <padding><Insets top="16" right="19" bottom="16" left="19"/></padding>
+        <Label text="Concepto del presupuesto" styleClass="catalog-heading"/>
+        <Label text="Tipo de impresión *" styleClass="form-label"/>
+        <ComboBox fx:id="printProfileCombo" maxWidth="Infinity"
+                  promptText="Seleccioná un perfil" styleClass="catalog-filter-combo"/>
+        <Label fx:id="printProfileHintLabel" text="El margen depende del perfil seleccionado."
+               styleClass="catalog-status" wrapText="true"/>
+        <Label text="Descripción *" styleClass="form-label"/>
+        <TextField fx:id="descriptionField" promptText="Ej.: impresión de soporte para herramientas"
+                   styleClass="form-field"/>
+        <GridPane hgap="12" vgap="5">
+          <Label text="Cantidad *" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+          <Label text="Tiempo estimado (minutos) *" styleClass="form-label"
+                 GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+          <TextField fx:id="quantityField" text="1" promptText="1" styleClass="form-field"
+                     GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+          <TextField fx:id="minutesField" promptText="120" styleClass="form-field"
+                     GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+        <Separator/>
+        <Label text="Materiales del concepto *" styleClass="form-label"/>
+        <Label text="Podés combinar materiales. Cada línea indica gramos por unidad (no descuenta bobinas)."
+               styleClass="catalog-status" wrapText="true"/>
+        <GridPane hgap="12" vgap="5">
+          <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS"/>
+            <ColumnConstraints minWidth="160" prefWidth="170"/>
+          </columnConstraints>
+          <Label text="Material activo" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+          <Label text="Gramos por unidad" styleClass="form-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+          <ComboBox fx:id="materialCombo" maxWidth="Infinity" promptText="Seleccioná un material"
+                    styleClass="catalog-filter-combo" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+          <TextField fx:id="gramsField" promptText="Ej.: 75,50" styleClass="form-field"
+                     GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+        <Label fx:id="costPerGramLabel" text="Elegí un material activo."
+               styleClass="catalog-status" wrapText="true"/>
+        <HBox spacing="8" alignment="CENTER_LEFT">
+          <Button fx:id="addMaterialButton" text="+ Agregar material"
+                  onAction="#addMaterial" styleClass="secondary-action"/>
+          <Button fx:id="removeMaterialButton" text="Quitar seleccionado" disable="true"
+                  onAction="#removeMaterial" styleClass="secondary-action"/>
+        </HBox>
+        <TableView fx:id="materialsTable" prefHeight="68" minHeight="68"
+                   maxHeight="68">
+          <columns>
+            <TableColumn fx:id="materialNameColumn" text="Material" prefWidth="340"/>
+            <TableColumn fx:id="materialGramsColumn" text="Gramos/unidad" prefWidth="135"/>
+            <TableColumn fx:id="materialCostColumn" text="Costo vigente ($/g)" prefWidth="155"/>
+          </columns>
+        </TableView>
+        <Label fx:id="materialsHintLabel" text="0 materiales" styleClass="catalog-status"
+               wrapText="true"/>
+      </VBox>
+      <VBox spacing="10" styleClass="catalog-panel">
+        <padding><Insets top="16" right="19" bottom="16" left="19"/></padding>
+        <Label text="Importes del concepto" styleClass="catalog-heading"/>
+        <CheckBox fx:id="automaticOperatingCostsCheckBox"
+                  text="Calcular electricidad y equipo automáticamente"
+                  onAction="#toggleAutomaticCosts" selected="true"/>
+        <Label fx:id="automaticCostsHintLabel" text="Cargando parámetros de costos..."
+               styleClass="catalog-status" wrapText="true"/>
+        <GridPane hgap="12" vgap="5">
+          <Label text="Electricidad ($)" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+          <Label text="Equipo + mantenimiento ($) *" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+          <TextField fx:id="electricityField" text="0,00" styleClass="form-field"
+                     GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+          <TextField fx:id="amortizationField" promptText="Mayor que cero" styleClass="form-field"
+                     GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+          <Label text="Margen (%)" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+          <Label text="Precio unitario ($) *" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+          <TextField fx:id="marginField" text="0,00" styleClass="form-field"
+                     GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+          <TextField fx:id="unitPriceField" editable="false" promptText="Presioná Calcular precio"
+                     styleClass="form-field" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+          <Button fx:id="calculateButton" text="Calcular precio" onAction="#calculatePrice"
+                  styleClass="home-action"/>
+          <CheckBox fx:id="manualPriceCheckBox" text="Ingresar precio manualmente"
+                    onAction="#togglePriceMode"/>
+        </HBox>
+        <Label fx:id="calculationDetailsLabel" text="Sin calcular. Los importes son por unidad de producto."
+               styleClass="catalog-status" wrapText="true"/>
+        <Label fx:id="calculationSummaryLabel" text="Calculá nuevamente si cambiás datos del concepto."
+               styleClass="section-description" wrapText="true"/>
+        <Label text="Los costos operativos se calculan por unidad según los minutos. El mínimo de Llavero, si está configurado, se aplica solo al precio calculado. El perfil queda registrado como prefijo en la descripción histórica del concepto."
+               styleClass="catalog-status" wrapText="true"/>
+        <Label text="Podés desmarcar costos automáticos para ajustarlos. En el presupuesto, «amortización» conserva depreciación y mantenimiento."
+               styleClass="catalog-status" wrapText="true"/>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" spacing="9">
+        <ProgressIndicator fx:id="progressIndicator" visible="false" managed="false"
+                           prefHeight="18" prefWidth="18" maxHeight="18" maxWidth="18"/>
+        <Label fx:id="feedbackLabel" styleClass="catalog-status" wrapText="true"
+               maxWidth="580" HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="cancelButton" text="Cancelar" onAction="#cancel" styleClass="secondary-action"/>
+        <Button fx:id="saveButton" text="Emitir presupuesto" disable="true"
+                onAction="#saveQuote" styleClass="home-action"/>
+      </HBox>
+    </VBox>
+  </content>
+</ScrollPane>

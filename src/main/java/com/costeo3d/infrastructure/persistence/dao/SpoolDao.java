@@ -17,4 +17,13 @@ public interface SpoolDao {
 
     // Returns false if no spool exists with the given ID.
     boolean update(Spool spool);
+
+    /** Edición de catálogo: nunca modifica el stock ni el material asociado. */
+    boolean updateColor(int spoolId, String color);
+
+    /** Reactivación: conserva pesos, consumos y relaciones. */
+    boolean activate(int spoolId);
+
+    /** Baja lógica: conserva pesos, consumos y todas las relaciones. */
+    boolean deactivate(int spoolId);
 }

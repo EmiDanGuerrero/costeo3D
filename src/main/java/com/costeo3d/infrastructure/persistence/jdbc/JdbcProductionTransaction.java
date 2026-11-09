@@ -18,8 +18,10 @@ import com.costeo3d.domain.enums.PrintJobStatus;
 import com.costeo3d.domain.exception.BusinessRuleException;
 import com.costeo3d.domain.exception.BusinessValidationException;
 import com.costeo3d.domain.exception.InvalidStateTransitionException;
+import com.costeo3d.domain.model.EstimatedWaste;
 import com.costeo3d.domain.model.FilamentConsumption;
 import com.costeo3d.domain.model.PrintJob;
+import com.costeo3d.domain.service.LayerFailureEstimator;
 import com.costeo3d.infrastructure.persistence.PersistenceException;
 
 /** Finaliza un trabajo, registra sus consumos y descuenta stock atomicamente. */
@@ -51,8 +53,22 @@ public final class JdbcProductionTransaction {
         return finish(job, consumptions, finishedAt, PrintJobStatus.FAILED);
     }
 
+    /** E11.4.4: la merma y los consumos se insertan bajo la misma transacción. */
+    public Result failJobWithEstimate(PrintJob job, List<FilamentConsumption> consumptions,
+            LocalDateTime finishedAt, int totalLayers, int failureLayer)
+            throws BusinessRuleException {
+        EstimatedWaste estimate = new EstimatedWaste(job, totalLayers, failureLayer);
+        return finish(job, consumptions, finishedAt, PrintJobStatus.FAILED, estimate);
+    }
+
     private Result finish(PrintJob job, List<FilamentConsumption> consumptions,
             LocalDateTime finishedAt, PrintJobStatus target) throws BusinessRuleException {
+        return finish(job, consumptions, finishedAt, target, null);
+    }
+
+    private Result finish(PrintJob job, List<FilamentConsumption> consumptions,
+            LocalDateTime finishedAt, PrintJobStatus target, EstimatedWaste estimate)
+            throws BusinessRuleException {
         Objects.requireNonNull(job, "Print job is required");
         Objects.requireNonNull(finishedAt, "Finish date is required");
         if (job.getId() == null || job.getId() <= 0) {
@@ -67,6 +83,9 @@ public final class JdbcProductionTransaction {
         }
         Map<Integer, BigDecimal> required =
                 JdbcProductionStock.prepare(job.getId(), consumptions);
+        if (estimate != null) {
+            validateFailureConsumption(estimate, consumptions);
+        }
 
         try (Connection connection = connectionFactory.openConnection()) {
             connection.setAutoCommit(false);
@@ -77,6 +96,10 @@ public final class JdbcProductionTransaction {
                 List<Integer> ids = new ArrayList<>();
                 for (FilamentConsumption consumption : consumptions) {
                     ids.add(JdbcFilamentConsumptionDao.insert(connection, consumption).getId());
+                }
+                if (estimate != null) {
+                    // Inserción ANTES del estado final. Si falla UNIQUE o SQL, rollback total.
+                    JdbcEstimatedWasteDao.insert(connection, estimate);
                 }
                 try (PreparedStatement update = connection.prepareStatement(FINISH_JOB)) {
                     update.setString(1, target == PrintJobStatus.COMPLETED
@@ -103,6 +126,24 @@ public final class JdbcProductionTransaction {
                     "Production transaction failed (SQLState: {0}, vendor code: {1}).",
                     new Object[] {e.getSQLState(), e.getErrorCode()});
             throw new PersistenceException("Cannot finalize print job.", e);
+        }
+    }
+
+    /** Verifica tambien en la capa persistente la regla gramos × capas. */
+    static void validateFailureConsumption(EstimatedWaste estimate,
+            List<FilamentConsumption> consumptions) throws BusinessValidationException {
+        for (FilamentConsumption consumption : consumptions) {
+            BigDecimal approved = consumption.getPlannedGrams();
+            if (approved == null || approved.signum() <= 0) {
+                throw new BusinessValidationException(
+                        "La falla necesita los gramos aprobados de cada material.");
+            }
+            BigDecimal expected = LayerFailureEstimator.estimate(approved,
+                    estimate.getTotalLayers(), estimate.getFailureLayer());
+            if (expected.compareTo(consumption.getConsumedGrams()) != 0) {
+                throw new BusinessValidationException(
+                        "Los gramos de merma no coinciden con las capas y el presupuesto.");
+            }
         }
     }
 

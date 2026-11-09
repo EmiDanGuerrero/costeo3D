@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.costeo3d.presentation.javafx.controller.QuotesController"
+      spacing="16" styleClass="catalogs-page">
+    <VBox spacing="10" styleClass="welcome-panel">
+        <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
+        <Label text="PRESUPUESTOS" styleClass="eyebrow"/>
+        <Label text="Calculadora y presupuestos" styleClass="section-title"/>
+        <Label text="Emití y consultá presupuestos, revisá sus valores históricos y gestioná sus estados."
+               styleClass="section-description" wrapText="true"/>
+    </VBox>
+    <VBox spacing="12" styleClass="catalog-panel">
+        <padding><Insets top="18" right="22" bottom="18" left="22"/></padding>
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Presupuestos registrados" styleClass="catalog-heading"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="newQuoteButton" text="+ Nuevo presupuesto"
+                    onAction="#newQuote" styleClass="home-action"/>
+            <Button fx:id="expiryButton" text="Verificar vencimientos"
+                    onAction="#checkExpirations" disable="true" styleClass="secondary-action"/>
+            <Button fx:id="refreshButton" text="Actualizar" onAction="#reloadQuotes"
+                    styleClass="secondary-action"/>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Button fx:id="acceptButton" text="Aceptar seleccionado" disable="true"
+                    onAction="#acceptSelected" styleClass="home-action"/>
+            <Button fx:id="cancelButton" text="Cancelar seleccionado" disable="true"
+                    onAction="#cancelSelected" styleClass="danger-action"/>
+        </HBox>
+        <HBox alignment="BOTTOM_LEFT" spacing="10" styleClass="catalog-filters">
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Buscar" styleClass="form-label"/>
+                <TextField fx:id="searchField" promptText="ID o nombre del cliente"
+                           styleClass="form-field"/>
+            </VBox>
+            <VBox spacing="5">
+                <Label text="Estado" styleClass="form-label"/>
+                <ComboBox fx:id="statusFilterCombo" prefWidth="160" maxWidth="160"
+                          styleClass="catalog-filter-combo"/>
+            </VBox>
+            <Button text="Limpiar" onAction="#clearFilters" styleClass="secondary-action"/>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ProgressIndicator fx:id="loadingIndicator" visible="false" managed="false"
+                               prefWidth="18" prefHeight="18" maxWidth="18" maxHeight="18"/>
+            <Label fx:id="statusLabel" text="Preparando consulta..." styleClass="catalog-status"
+                   wrapText="true"/>
+        </HBox>
+        <TableView fx:id="quotesTable" styleClass="catalog-table">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="52"/>
+                <TableColumn fx:id="customerColumn" text="Cliente" prefWidth="185"/>
+                <TableColumn fx:id="issuedColumn" text="Emisión" prefWidth="125"/>
+                <TableColumn fx:id="expiresColumn" text="Vencimiento" prefWidth="125"/>
+                <TableColumn fx:id="totalColumn" text="Total ($)" prefWidth="95"/>
+                <TableColumn fx:id="statusColumn" text="Estado" prefWidth="105"/>
+            </columns>
+        </TableView>
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Label text="10 presupuestos por página · Ordená desde los encabezados"
+                   styleClass="catalog-pagination-hint"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
+                    styleClass="secondary-action" disable="true"/>
+            <Label fx:id="pageLabel" text="Página 1 de 1" styleClass="catalog-page-label"/>
+            <Button fx:id="nextPageButton" text="Siguiente" onAction="#nextPage"
+                    styleClass="secondary-action" disable="true"/>
+        </HBox>
+    </VBox>
+    <VBox spacing="9" styleClass="catalog-panel">
+        <padding><Insets top="16" right="22" bottom="16" left="22"/></padding>
+        <Label fx:id="detailTitle" text="Detalle del presupuesto" styleClass="catalog-heading"/>
+        <TextArea fx:id="detailArea" editable="false" wrapText="true"
+                  prefRowCount="6" prefHeight="145" maxHeight="145"
+                  text="Seleccioná un presupuesto para ver sus detalles."/>
+    </VBox>
+    <Label text="E11.2.1 · Emisión de un concepto/material con precio manual; conexión con CostCalculator pendiente."
+           styleClass="bottom-hint" wrapText="true"/>
+</VBox>

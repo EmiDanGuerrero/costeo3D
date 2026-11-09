@@ -137,6 +137,115 @@ public final class JdbcOrderDao implements OrderDao {
         }
     }
 
+
+    /**
+     * Status transition with database-side guards. This prevents a stale GUI
+     * from overwriting a newer order status, and checks job completion for READY.
+     * No job or spool row is updated by this operation.
+     */
+    @Override
+    public boolean changeStatusIfCurrent(
+            int orderId, OrderStatus expected, OrderStatus next) {
+        if (orderId <= 0) {
+            throw new IllegalArgumentException("Order ID must be positive.");
+        }
+        Objects.requireNonNull(expected, "Expected status is required.");
+        Objects.requireNonNull(next, "New status is required.");
+        final String guards;
+        if (expected == OrderStatus.PENDING && next == OrderStatus.IN_PRODUCTION) {
+            guards = """
+                    AND EXISTS (SELECT 1 FROM trabajo_impresion AS t
+                                WHERE t.id_pedido = p.id_pedido)
+                    """;
+        } else if (expected == OrderStatus.IN_PRODUCTION && next == OrderStatus.READY) {
+            guards = """
+                    AND EXISTS (SELECT 1 FROM trabajo_impresion AS t
+                                WHERE t.id_pedido = p.id_pedido)
+                    AND NOT EXISTS (SELECT 1 FROM trabajo_impresion AS t
+                                    WHERE t.id_pedido = p.id_pedido
+                                      AND t.estado <> 'FINALIZADO')
+                    """;
+        } else if (expected == OrderStatus.READY && next == OrderStatus.DELIVERED) {
+            guards = "";
+        } else if (expected == OrderStatus.PENDING && next == OrderStatus.CANCELLED) {
+            guards = """
+                    AND NOT EXISTS (SELECT 1 FROM trabajo_impresion AS t
+                                    WHERE t.id_pedido = p.id_pedido
+                                      AND t.estado <> 'PENDIENTE')
+                    """;
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported order transition: " + expected + " -> " + next);
+        }
+        String sql = """
+                UPDATE pedido AS p
+                SET p.estado = ?
+                WHERE p.id_pedido = ? AND p.estado = ?
+                """ + guards;
+        try (Connection connection = connectionFactory.openConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, toDatabaseStatus(next));
+            statement.setInt(2, orderId);
+            statement.setString(3, toDatabaseStatus(expected));
+            return statement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw persistenceFailure("changeStatusIfCurrent", e);
+        }
+    }
+
+    /** Atomic, narrowly scoped update. Production and inventory are untouched. */
+    @Override
+    public boolean updatePendingJobPlan(int orderId, int jobId,
+            Integer modelId, int estimatedMinutes) {
+        if (orderId <= 0 || jobId <= 0 || estimatedMinutes <= 0) {
+            throw new IllegalArgumentException("IDs and estimated minutes must be positive.");
+        }
+        final String sql = """
+                UPDATE trabajo_impresion AS t
+                INNER JOIN pedido AS p ON p.id_pedido = t.id_pedido
+                SET t.id_modelo = ?, t.tiempo_estimado_minutos = ?
+                WHERE t.id_trabajo = ? AND t.id_pedido = ?
+                  AND t.estado = 'PENDIENTE' AND p.estado = 'PENDIENTE'
+                  AND (? IS NULL OR t.id_modelo <=> ? OR EXISTS (
+                      SELECT 1 FROM modelo_3d AS m
+                      WHERE m.id_modelo = ? AND m.activo = 1
+                  ))
+                """;
+        try (Connection connection = connectionFactory.openConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, modelId, java.sql.Types.INTEGER);
+            statement.setInt(2, estimatedMinutes);
+            statement.setInt(3, jobId);
+            statement.setInt(4, orderId);
+            statement.setObject(5, modelId, java.sql.Types.INTEGER);
+            statement.setObject(6, modelId, java.sql.Types.INTEGER);
+            statement.setObject(7, modelId, java.sql.Types.INTEGER);
+            if (statement.executeUpdate() > 0) return true;
+
+            // MySQL can report 0 modified rows when the values were already equal.
+            // Verify eligibility before treating that case as success.
+            final String unchangedSql = """
+                    SELECT 1 FROM trabajo_impresion AS t
+                    INNER JOIN pedido AS p ON p.id_pedido = t.id_pedido
+                    WHERE t.id_trabajo = ? AND t.id_pedido = ?
+                      AND t.estado = 'PENDIENTE' AND p.estado = 'PENDIENTE'
+                      AND t.tiempo_estimado_minutos = ?
+                      AND t.id_modelo <=> ?
+                    """;
+            try (PreparedStatement check = connection.prepareStatement(unchangedSql)) {
+                check.setInt(1, jobId);
+                check.setInt(2, orderId);
+                check.setInt(3, estimatedMinutes);
+                check.setObject(4, modelId, java.sql.Types.INTEGER);
+                try (ResultSet results = check.executeQuery()) {
+                    return results.next();
+                }
+            }
+        } catch (SQLException exception) {
+            throw persistenceFailure("updatePendingJobPlan", exception);
+        }
+    }
+
     private static String toDatabaseStatus(OrderStatus status) {
         return switch (Objects.requireNonNull(status, "Order status is required")) {
             case PENDING -> "PENDIENTE";

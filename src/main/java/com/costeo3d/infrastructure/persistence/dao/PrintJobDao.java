@@ -1,5 +1,6 @@
 package com.costeo3d.infrastructure.persistence.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,13 @@ public interface PrintJobDao {
 
     // Lists the print jobs belonging to a particular persisted order.
     List<PrintJob> findByOrderId(int orderId);
+
+    /**
+     * Registra el inicio de un trabajo pendiente solo si el pedido relacionado
+     * sigue En producción. Actualiza únicamente estado y fecha de inicio.
+     * Devuelve false cuando no se cumple alguna condición en MySQL.
+     */
+    boolean startIfPendingForProductionOrder(int jobId, LocalDateTime startedAt);
 
     // Persists changes to the print job, including status and production dates.
     // Returns false when the record does not exist.

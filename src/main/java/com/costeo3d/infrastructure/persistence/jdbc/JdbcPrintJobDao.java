@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,6 +37,19 @@ public final class JdbcPrintJobDao implements PrintJobDao {
                 fecha_inicio = ?, fecha_fin = ?, estado = ?,
                 tiempo_estimado_minutos = ?
             WHERE id_trabajo = ?
+            """;
+
+    // Transición atómica: no sobreescribe modelo, minutos, fechas históricas
+    // ni consumos. La condición del pedido se evalúa en la misma sentencia.
+    private static final String START_IF_PENDING_SQL = """
+            UPDATE trabajo_impresion AS t
+            INNER JOIN pedido AS p ON p.id_pedido = t.id_pedido
+            SET t.fecha_inicio = ?, t.estado = 'EN_PROCESO'
+            WHERE t.id_trabajo = ?
+              AND t.estado = 'PENDIENTE'
+              AND t.fecha_inicio IS NULL
+              AND t.fecha_fin IS NULL
+              AND p.estado = 'EN_PRODUCCION'
             """;
 
     private final JdbcConnectionFactory connectionFactory;
@@ -95,6 +109,22 @@ public final class JdbcPrintJobDao implements PrintJobDao {
             throw persistenceFailure("findByOrderId", e);
         }
     }
+    @Override
+    public boolean startIfPendingForProductionOrder(int jobId, LocalDateTime startedAt) {
+        if (jobId <= 0) {
+            throw new IllegalArgumentException("Print job ID must be positive.");
+        }
+        Objects.requireNonNull(startedAt, "Start date is required.");
+        try (Connection connection = connectionFactory.openConnection();
+                PreparedStatement statement = connection.prepareStatement(START_IF_PENDING_SQL)) {
+            statement.setTimestamp(1, Timestamp.valueOf(startedAt));
+            statement.setInt(2, jobId);
+            return statement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw persistenceFailure("startIfPendingForProductionOrder", e);
+        }
+    }
+
     @Override
     public boolean update(PrintJob job) {
         Objects.requireNonNull(job, "Print job is required");

@@ -32,6 +32,14 @@ public final class JdbcProductionFinalizationAdapter
         return toCompletion(transaction.failJob(job, consumptions, finishedAt));
     }
 
+    @Override
+    public Completion failJobWithEstimate(PrintJob job,
+            List<FilamentConsumption> consumptions, LocalDateTime finishedAt,
+            int totalLayers, int failureLayer) throws BusinessRuleException {
+        return toCompletion(transaction.failJobWithEstimate(
+                job, consumptions, finishedAt, totalLayers, failureLayer));
+    }
+
     private static Completion toCompletion(JdbcProductionTransaction.Result result) {
         return new Completion(result.finishedJob(), result.consumptionIds(),
                 result.remainingGramsBySpool());

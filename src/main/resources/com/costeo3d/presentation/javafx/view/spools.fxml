@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.costeo3d.presentation.javafx.controller.SpoolsController"
+      spacing="16" styleClass="catalogs-page">
+    <VBox spacing="10" styleClass="welcome-panel">
+        <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
+        <Label text="CATÁLOGOS" styleClass="eyebrow"/>
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label text="Bobinas" styleClass="section-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <Label text="Consulta de bobinas y sus existencias registradas."
+               wrapText="true" styleClass="section-description"/>
+    </VBox>
+    <VBox spacing="12" styleClass="catalog-panel">
+        <padding><Insets top="18" right="22" bottom="18" left="22"/></padding>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Listado de bobinas" styleClass="catalog-heading"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="newSpoolButton" text="Nueva bobina" onAction="#createSpool"
+                    styleClass="home-action"/>
+            <Button fx:id="refreshButton" text="Actualizar" onAction="#reloadSpools"
+                    styleClass="secondary-action"/>
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button fx:id="editSpoolButton" text="Editar seleccionada" onAction="#editSpool"
+                    disable="true" styleClass="secondary-action"/>
+            <Button fx:id="spoolStatusButton" text="Desactivar seleccionada"
+                    onAction="#changeSpoolStatus" disable="true" styleClass="danger-action"/>
+        </HBox>
+        <HBox spacing="10" alignment="BOTTOM_LEFT" styleClass="catalog-filters">
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Buscar" styleClass="form-label"/>
+                <TextField fx:id="searchField" promptText="ID, marca, tipo o color"
+                           minWidth="140" styleClass="form-field"/>
+            </VBox>
+            <VBox spacing="5">
+                <Label text="Estado" styleClass="form-label"/>
+                <ComboBox fx:id="statusFilterCombo" prefWidth="170" maxWidth="170"
+                          styleClass="catalog-filter-combo"/>
+            </VBox>
+            <Button text="Limpiar" onAction="#clearFilters" styleClass="secondary-action"/>
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <ProgressIndicator fx:id="loadingIndicator" visible="false" managed="false"
+                               prefWidth="18" prefHeight="18" maxWidth="18" maxHeight="18"/>
+            <Label fx:id="statusLabel" text="Preparando consulta..."
+                   wrapText="true" styleClass="catalog-status"/>
+        </HBox>
+        <TableView fx:id="spoolsTable" styleClass="catalog-table">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="55"/>
+                <TableColumn fx:id="materialColumn" text="Material" prefWidth="175"/>
+                <TableColumn fx:id="colorColumn" text="Color" prefWidth="125"/>
+                <TableColumn fx:id="initialWeightColumn" text="Peso inicial (g)" prefWidth="115"/>
+                <TableColumn fx:id="currentWeightColumn" text="Peso actual (g)" prefWidth="115"/>
+                <TableColumn fx:id="statusColumn" text="Estado" prefWidth="85"/>
+            </columns>
+        </TableView>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Label text="10 bobinas por página · Ordená haciendo clic en las columnas"
+                   styleClass="catalog-pagination-hint"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
+                    styleClass="secondary-action" disable="true"/>
+            <Label fx:id="pageLabel" text="Página 1 de 1" styleClass="catalog-page-label"/>
+            <Button fx:id="nextPageButton" text="Siguiente" onAction="#nextPage"
+                    styleClass="secondary-action" disable="true"/>
+        </HBox>
+    </VBox>
+    <Label text="E10.3 · Podés editar el color, activar y desactivar bobinas. Los pesos y consumos los gestiona Producción."
+           wrapText="true" styleClass="bottom-hint"/>
+</VBox>

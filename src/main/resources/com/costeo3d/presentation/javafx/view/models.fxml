@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="modelsScroll"
+            fx:controller="com.costeo3d.presentation.javafx.controller.ModelsController"
+            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            maxHeight="Infinity" maxWidth="Infinity" styleClass="models-scroll-root">
+    <content>
+        <VBox spacing="16" styleClass="catalogs-page">
+            <VBox spacing="10" styleClass="welcome-panel">
+                <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
+                <Label text="CATÁLOGOS" styleClass="eyebrow"/>
+                <Label text="Modelos 3D" styleClass="section-title"/>
+                <Label text="Explorá tu biblioteca de modelos y sus estimaciones de impresión."
+                       wrapText="true" styleClass="section-description"/>
+            </VBox>
+            <VBox spacing="14" styleClass="catalog-panel">
+                <padding><Insets top="18" right="22" bottom="18" left="22"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Galería de modelos 3D" styleClass="catalog-heading"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="newModelButton" text="Nuevo modelo 3D" onAction="#createModel"
+                            styleClass="home-action"/>
+                    <Button fx:id="refreshButton" text="Actualizar" onAction="#reloadModels"
+                            styleClass="secondary-action"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button fx:id="editModelButton" text="Editar seleccionado" onAction="#editSelectedModel"
+                            disable="true" styleClass="secondary-action"/>
+                    <Button fx:id="toggleStateButton" text="Activar / Desactivar"
+                            onAction="#toggleSelectedModel" disable="true" styleClass="secondary-action"/>
+                </HBox>
+                <HBox spacing="10" alignment="BOTTOM_LEFT" styleClass="catalog-filters">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Buscar" styleClass="form-label"/>
+                        <TextField fx:id="searchField" promptText="ID, nombre o plataforma..."
+                                   minWidth="130" styleClass="form-field"/>
+                    </VBox>
+                    <VBox spacing="5">
+                        <Label text="Estado" styleClass="form-label"/>
+                        <ComboBox fx:id="statusFilterCombo" prefWidth="145" maxWidth="145"
+                                  styleClass="catalog-filter-combo"/>
+                    </VBox>
+                    <VBox spacing="5">
+                        <Label text="Ordenar por" styleClass="form-label"/>
+                        <ComboBox fx:id="sortCombo" prefWidth="205" maxWidth="205"
+                                  styleClass="catalog-filter-combo"/>
+                    </VBox>
+                    <Button text="Limpiar" onAction="#clearFilters" styleClass="secondary-action"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <ProgressIndicator fx:id="loadingIndicator" visible="false" managed="false"
+                                       prefWidth="18" prefHeight="18" maxWidth="18" maxHeight="18"/>
+                    <Label fx:id="statusLabel" text="Preparando consulta..."
+                           wrapText="true" styleClass="catalog-status"/>
+                </HBox>
+                <StackPane fx:id="galleryArea" alignment="TOP_LEFT" minHeight="120">
+                    <FlowPane fx:id="galleryFlow" hgap="14" vgap="14" alignment="TOP_LEFT"/>
+                    <VBox fx:id="emptyStateBox" spacing="8" alignment="CENTER"
+                          visible="false" managed="false" styleClass="models-empty-state">
+                        <Label fx:id="emptyStateTitle" text="Sin modelos" styleClass="models-empty-title"/>
+                        <Label fx:id="emptyStateDescription" text="Agregá un modelo 3D."
+                               wrapText="true" styleClass="models-empty-description"/>
+                    </VBox>
+                </StackPane>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Label text="9 modelos por página · Seleccioná una tarjeta para editarla o cambiar su estado"
+                           styleClass="catalog-pagination-hint"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
+                            styleClass="secondary-action" disable="true"/>
+                    <Label fx:id="pageLabel" text="Página 1 de 1" styleClass="catalog-page-label"/>
+                    <Button fx:id="nextPageButton" text="Siguiente" onAction="#nextPage"
+                            styleClass="secondary-action" disable="true"/>
+                </HBox>
+            </VBox>
+            <Label text="E10.4.4 · Podés editar los modelos y activar o desactivar su disponibilidad."
+                   wrapText="true" styleClass="bottom-hint"/>
+        </VBox>
+    </content>
+</ScrollPane>

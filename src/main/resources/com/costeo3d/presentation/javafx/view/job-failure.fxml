@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.costeo3d.presentation.javafx.controller.JobFailureController"
+            style="-fx-background-color: #f5f7fb;">
+    <top>
+        <VBox spacing="7" styleClass="welcome-panel">
+            <padding><Insets top="18" right="22" bottom="17" left="22"/></padding>
+            <Label text="REGISTRAR IMPRESIÓN FALLIDA" styleClass="eyebrow"/>
+            <Label fx:id="jobTitleLabel" text="Trabajo" styleClass="section-title"/>
+            <Label text="Los gramos se toman del presupuesto aprobado. La merma se estima proporcionalmente a la capa donde falló la impresión."
+                   styleClass="section-description" wrapText="true"/>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fx:id="formScroll" fitToWidth="true" hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED" vvalue="0.0"
+                    style="-fx-background: transparent; -fx-background-color: transparent;">
+            <content>
+                <VBox spacing="15" style="-fx-padding: 17 22 17 22;">
+                    <VBox spacing="12" styleClass="catalog-panel">
+                        <padding><Insets top="15" right="16" bottom="15" left="16"/></padding>
+                        <Label text="Consumo aprobado del presupuesto" styleClass="catalog-heading"/>
+                        <Label fx:id="sourceLabel" text="Cargando presupuesto..."
+                               styleClass="section-description" wrapText="true"/>
+                        <Label fx:id="summaryLabel" text="Los gramos aprobados no son editables."
+                               styleClass="catalog-status" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="12" styleClass="catalog-panel">
+                        <padding><Insets top="15" right="16" bottom="15" left="16"/></padding>
+                        <Label text="Capas del slicer" styleClass="catalog-heading"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Capas totales" styleClass="form-label"/>
+                                <TextField fx:id="totalLayersField" promptText="Ej.: 500"
+                                           styleClass="form-field"/>
+                            </VBox>
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Capa donde falló" styleClass="form-label"/>
+                                <TextField fx:id="failureLayerField" promptText="Ej.: 200"
+                                           styleClass="form-field"/>
+                            </VBox>
+                        </HBox>
+                        <Label fx:id="validationLabel" text="Ingresá ambas cantidades para calcular la merma."
+                               styleClass="section-description" wrapText="true"/>
+                        <Label text="Estimación: los gramos pueden no distribuirse uniformemente entre las capas."
+                               styleClass="bottom-hint" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="12" styleClass="catalog-panel">
+                        <padding><Insets top="15" right="16" bottom="15" left="16"/></padding>
+                        <Label text="Bobinas utilizadas" styleClass="catalog-heading"/>
+                        <Label fx:id="stockStatusLabel" text="Consultando bobinas..."
+                               styleClass="section-description" wrapText="true"/>
+                        <VBox fx:id="assignmentsBox" spacing="12"/>
+                    </VBox>
+                    <Label text="Al confirmar, se registran la merma, los consumos y el estado FALLIDO, y MySQL descuenta el stock en una única transacción."
+                           styleClass="bottom-hint" wrapText="true"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10"
+              style="-fx-padding: 15 22 15 22; -fx-background-color: white; -fx-border-color: #e3e9f0; -fx-border-width: 1 0 0 0;">
+            <ProgressIndicator fx:id="progressIndicator" visible="false" managed="false"
+                               prefWidth="22" prefHeight="22" maxWidth="22" maxHeight="22"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="cancelButton" text="Cancelar" onAction="#cancel"
+                    styleClass="secondary-action"/>
+            <Button fx:id="failButton" text="Registrar falla y descontar stock"
+                    onAction="#failJob" disable="true" styleClass="home-action"/>
+        </HBox>
+    </bottom>
+</BorderPane>

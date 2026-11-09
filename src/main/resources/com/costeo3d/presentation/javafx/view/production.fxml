@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.costeo3d.presentation.javafx.controller.ProductionController"
+            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;">
+    <content>
+        <VBox spacing="16" styleClass="catalogs-page">
+            <VBox spacing="10" styleClass="welcome-panel">
+                <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
+                <Label text="PRODUCCIÓN" styleClass="eyebrow"/>
+                <Label text="Trabajos de impresión" styleClass="section-title"/>
+                <Label text="Consultá los trabajos asociados a pedidos, sus estados y sus tiempos estimados."
+                       styleClass="section-description" wrapText="true"/>
+            </VBox>
+            <VBox spacing="12" styleClass="catalog-panel">
+                <padding><Insets top="18" right="22" bottom="18" left="22"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Trabajos registrados" styleClass="catalog-heading"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="refreshButton" text="Actualizar" onAction="#reloadJobs"
+                            styleClass="secondary-action"/>
+                </HBox>
+                <Label fx:id="summaryLabel" text="Preparando resumen..."
+                       styleClass="catalog-status" wrapText="true"/>
+                <HBox alignment="BOTTOM_LEFT" spacing="10" styleClass="catalog-filters">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Buscar" styleClass="form-label"/>
+                        <TextField fx:id="searchField" promptText="ID de trabajo, pedido, cliente o modelo"
+                                   styleClass="form-field"/>
+                    </VBox>
+                    <VBox spacing="5">
+                        <Label text="Estado" styleClass="form-label"/>
+                        <ComboBox fx:id="statusFilterCombo" prefWidth="155" maxWidth="155"
+                                  styleClass="catalog-filter-combo"/>
+                    </VBox>
+                    <Button fx:id="clearFiltersButton" text="Limpiar" onAction="#clearFilters"
+                            styleClass="secondary-action"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <ProgressIndicator fx:id="loadingIndicator" visible="false" managed="false"
+                                       prefWidth="18" prefHeight="18" maxWidth="18" maxHeight="18"/>
+                    <Label fx:id="statusLabel" text="Preparando consulta..."
+                           styleClass="catalog-status" wrapText="true"/>
+                </HBox>
+                <TableView fx:id="jobsTable" styleClass="catalog-table">
+                    <columns>
+                        <TableColumn fx:id="idColumn" text="Trabajo #" prefWidth="83"/>
+                        <TableColumn fx:id="orderColumn" text="Pedido #" prefWidth="82"/>
+                        <TableColumn fx:id="customerColumn" text="Cliente" prefWidth="155"/>
+                        <TableColumn fx:id="modelColumn" text="Modelo" prefWidth="175"/>
+                        <TableColumn fx:id="minutesColumn" text="Minutos" prefWidth="82"/>
+                        <TableColumn fx:id="statusColumn" text="Estado" prefWidth="110"/>
+                    </columns>
+                </TableView>
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label text="10 trabajos por página · Ordená desde los encabezados"
+                           styleClass="catalog-pagination-hint"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
+                            styleClass="secondary-action" disable="true"/>
+                    <Label fx:id="pageLabel" text="Página 1 de 1" styleClass="catalog-page-label"/>
+                    <Button fx:id="nextPageButton" text="Siguiente" onAction="#nextPage"
+                            styleClass="secondary-action" disable="true"/>
+                </HBox>
+            </VBox>
+            <VBox spacing="9" styleClass="catalog-panel">
+                <padding><Insets top="16" right="22" bottom="16" left="22"/></padding>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label fx:id="detailTitle" text="Detalle del trabajo" styleClass="catalog-heading"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="startJobButton" text="Iniciar trabajo"
+                            onAction="#startSelectedJob" disable="true" styleClass="home-action"/>
+                    <Button fx:id="failJobButton" text="Registrar falla"
+                            onAction="#failSelectedJob" disable="true" styleClass="secondary-action"/>
+                    <Button fx:id="completeJobButton" text="Finalizar trabajo"
+                            onAction="#completeSelectedJob" disable="true" styleClass="home-action"/>
+                </HBox>
+                <Label fx:id="jobActionHintLabel"
+                       text="Seleccioná un trabajo para ver las acciones disponibles."
+                       styleClass="section-description" wrapText="true"/>
+                <TextArea fx:id="detailArea" editable="false" wrapText="true"
+                          prefRowCount="9" prefHeight="210" maxHeight="210"
+                          text="Seleccioná un trabajo de la tabla para consultar su detalle."/>
+                <Label text="E11.4.4 · Finalizá correctamente o registrá una falla con su merma estimada por capas."
+                       styleClass="section-description" wrapText="true"/>
+            </VBox>
+            <Label text="Al finalizar o fallar, el stock se descuenta en una transacción MySQL. Los consumos por falla se estiman según las capas ingresadas."
+                   styleClass="bottom-hint" wrapText="true"/>
+        </VBox>
+    </content>
+</ScrollPane>

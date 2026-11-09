@@ -22,6 +22,11 @@ public interface ProductionFinalizationPort {
     Completion failJob(PrintJob job, List<FilamentConsumption> consumptions,
             LocalDateTime finishedAt) throws BusinessRuleException;
 
+    /** E11.4.4: registra la merma por capas junto al consumo y el estado FALLIDO. */
+    Completion failJobWithEstimate(PrintJob job, List<FilamentConsumption> consumptions,
+            LocalDateTime finishedAt, int totalLayers, int failureLayer)
+            throws BusinessRuleException;
+
     /** Resultado confirmado, con IDs y pesos restantes obtenidos de la transaccion. */
     record Completion(PrintJob finishedJob, List<Integer> consumptionIds,
             Map<Integer, BigDecimal> remainingGramsBySpool) {
