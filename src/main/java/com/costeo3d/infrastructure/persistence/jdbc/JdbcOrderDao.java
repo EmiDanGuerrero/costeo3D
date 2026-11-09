@@ -160,10 +160,21 @@ public final class JdbcOrderDao implements OrderDao {
         } else if (expected == OrderStatus.IN_PRODUCTION && next == OrderStatus.READY) {
             guards = """
                     AND EXISTS (SELECT 1 FROM trabajo_impresion AS t
-                                WHERE t.id_pedido = p.id_pedido)
+                                WHERE t.id_pedido = p.id_pedido
+                                  AND t.estado = 'FINALIZADO')
                     AND NOT EXISTS (SELECT 1 FROM trabajo_impresion AS t
                                     WHERE t.id_pedido = p.id_pedido
-                                      AND t.estado <> 'FINALIZADO')
+                                      AND t.estado IN ('PENDIENTE', 'EN_PROCESO'))
+                    AND NOT EXISTS (
+                        SELECT 1 FROM trabajo_impresion AS f
+                        WHERE f.id_pedido = p.id_pedido AND f.estado = 'FALLIDO'
+                          AND NOT EXISTS (
+                              SELECT 1 FROM trabajo_impresion AS r
+                              WHERE r.id_pedido = f.id_pedido
+                                AND r.id_trabajo_origen = f.id_trabajo
+                                AND r.id_trabajo > f.id_trabajo
+                          )
+                    )
                     """;
         } else if (expected == OrderStatus.READY && next == OrderStatus.DELIVERED) {
             guards = "";

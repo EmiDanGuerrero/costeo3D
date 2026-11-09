@@ -23,7 +23,7 @@
                     <padding><Insets top="20" right="22" bottom="12" left="22"/></padding>
                     <VBox spacing="7" styleClass="welcome-panel">
                         <padding><Insets top="16" bottom="16" left="20" right="20"/></padding>
-                        <Label text="E11.3 · PLANIFICACIÓN" styleClass="eyebrow"/>
+                        <Label text="PLANIFICACIÓN" styleClass="eyebrow"/>
                         <Label text="Editar trabajo pendiente" styleClass="section-title"/>
                         <Label fx:id="jobTitle" text="Pedido y trabajo" styleClass="section-description"/>
                     </VBox>

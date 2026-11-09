@@ -22,7 +22,7 @@
             <Label text="Clientes" styleClass="section-title"/>
             <Region HBox.hgrow="ALWAYS"/>
         </HBox>
-        <Label text="Registrá clientes y consultá sus datos de contacto."
+        <Label text="Registro y consulta de clientes y datos de contacto."
                wrapText="true" styleClass="section-description"/>
     </VBox>
     <VBox spacing="12" styleClass="catalog-panel">
@@ -70,7 +70,7 @@
             </columns>
         </TableView>
         <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Label text="10 clientes por página · Ordená haciendo clic en las columnas"
+            <Label text="10 clientes por página · Ordenamiento por columnas"
                    styleClass="catalog-pagination-hint"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -80,6 +80,4 @@
                     styleClass="secondary-action" disable="true"/>
         </HBox>
     </VBox>
-    <Label text="E10.5 · Clientes con alta, edición, búsqueda y activación/desactivación reversible."
-           wrapText="true" styleClass="bottom-hint"/>
 </VBox>

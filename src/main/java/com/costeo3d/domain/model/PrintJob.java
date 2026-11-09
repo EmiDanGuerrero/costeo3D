@@ -18,6 +18,8 @@ public class PrintJob {
 
     private PrintJobStatus status;
     private int estimatedPrintTimeMinutes;
+    // Id del trabajo FALLIDO que originó este intento; NULL para el primero.
+    private final Integer retryOfJobId;
 
     public PrintJob(Order order, Model3D model, LocalDateTime createdAt,
             int estimatedPrintTimeMinutes) {
@@ -29,8 +31,20 @@ public class PrintJob {
             LocalDateTime createdAt, LocalDateTime startedAt,
             LocalDateTime finishedAt, PrintJobStatus status,
             int estimatedPrintTimeMinutes) {
+        this(id, order, model, createdAt, startedAt, finishedAt, status,
+                estimatedPrintTimeMinutes, null);
+    }
+
+    public PrintJob(Integer id, Order order, Model3D model,
+            LocalDateTime createdAt, LocalDateTime startedAt,
+            LocalDateTime finishedAt, PrintJobStatus status,
+            int estimatedPrintTimeMinutes, Integer retryOfJobId) {
 
         this.id = id;
+        if (retryOfJobId != null && (retryOfJobId <= 0 || retryOfJobId.equals(id))) {
+            throw new IllegalArgumentException("El trabajo origen debe ser válido y distinto.");
+        }
+        this.retryOfJobId = retryOfJobId;
         this.order = order;
         this.model = model;
         this.createdAt = ValidationUtils.requireNotNull(createdAt, "Creation date");
@@ -43,6 +57,10 @@ public class PrintJob {
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getRetryOfJobId() {
+        return retryOfJobId;
     }
 
     public Order getOrder() {

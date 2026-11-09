@@ -3,6 +3,7 @@ package com.costeo3d.bootstrap;
 import java.util.Objects;
 
 import com.costeo3d.application.service.CatalogService;
+import com.costeo3d.application.service.HomeDashboardService;
 import com.costeo3d.application.service.PersistentOrderService;
 import com.costeo3d.application.service.PersistentProductionService;
 import com.costeo3d.application.service.PersistentQuoteService;
@@ -17,7 +18,8 @@ public record AppServices(
         PersistentQuoteService quotes,
         PersistentOrderService orders,
         PersistentProductionService production,
-        PersistentWasteEstimator waste) {
+        PersistentWasteEstimator waste,
+        HomeDashboardService dashboard) {
 
     public AppServices {
         Objects.requireNonNull(catalogs, "CatalogService is required.");
@@ -25,5 +27,6 @@ public record AppServices(
         Objects.requireNonNull(orders, "PersistentOrderService is required.");
         Objects.requireNonNull(production, "PersistentProductionService is required.");
         Objects.requireNonNull(waste, "PersistentWasteEstimator is required.");
+        Objects.requireNonNull(dashboard, "HomeDashboardService is required.");
     }
 }

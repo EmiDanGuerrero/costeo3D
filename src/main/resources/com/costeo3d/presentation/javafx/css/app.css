@@ -439,3 +439,39 @@
     -fx-text-fill: #7d93ad;
     -fx-font-size: 12px;
 }
+
+/* Inicio — panel de indicadores en tiempo real (consulta manual). */
+.dashboard-page { -fx-padding: 0 5px 20px 0; }
+.dashboard-header { -fx-padding: 5px 0 3px 0; }
+.dashboard-kpi-card, .dashboard-alerts-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 13px;
+    -fx-border-color: #e0e6f0;
+    -fx-border-radius: 13px;
+    -fx-padding: 18px 20px;
+}
+.dashboard-kpi-card { -fx-min-height: 170px; }
+.dashboard-kpi-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #354760; }
+.dashboard-kpi-value { -fx-font-size: 29px; -fx-font-weight: bold; -fx-text-fill: #1d2c42; }
+.dashboard-kpi-caption { -fx-font-size: 12px; -fx-text-fill: #71849b; }
+.dashboard-link-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5px 0 0 0;
+    -fx-text-fill: #355c88;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+}
+.dashboard-link-button:hover { -fx-text-fill: #203e60; -fx-underline: true; }
+.dashboard-panel-heading { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1d2c42; }
+.dashboard-muted, .dashboard-status { -fx-font-size: 12px; -fx-text-fill: #71849b; }
+.dashboard-status { -fx-padding: 2px 0 8px 0; }
+.dashboard-alert-row {
+    -fx-background-color: #f4f7fb;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 12px;
+    -fx-alignment: center-left;
+}
+.dashboard-alert-name { -fx-font-size: 12px; -fx-text-fill: #354760; }
+.dashboard-alert-grams { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #ab5b24; }

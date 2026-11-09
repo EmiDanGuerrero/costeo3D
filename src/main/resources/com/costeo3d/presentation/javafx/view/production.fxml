@@ -23,7 +23,7 @@
                 <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
                 <Label text="PRODUCCIÓN" styleClass="eyebrow"/>
                 <Label text="Trabajos de impresión" styleClass="section-title"/>
-                <Label text="Consultá los trabajos asociados a pedidos, sus estados y sus tiempos estimados."
+                <Label text="Seguimiento de trabajos, estados y tiempos estimados de impresión."
                        styleClass="section-description" wrapText="true"/>
             </VBox>
             <VBox spacing="12" styleClass="catalog-panel">
@@ -67,7 +67,7 @@
                     </columns>
                 </TableView>
                 <HBox alignment="CENTER_RIGHT" spacing="10">
-                    <Label text="10 trabajos por página · Ordená desde los encabezados"
+                    <Label text="10 trabajos por página · Ordenamiento por columnas"
                            styleClass="catalog-pagination-hint"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -95,11 +95,9 @@
                 <TextArea fx:id="detailArea" editable="false" wrapText="true"
                           prefRowCount="9" prefHeight="210" maxHeight="210"
                           text="Seleccioná un trabajo de la tabla para consultar su detalle."/>
-                <Label text="E11.4.4 · Finalizá correctamente o registrá una falla con su merma estimada por capas."
+                <Label text="Al registrar una falla, se descuenta la merma y se genera un reintento pendiente para el mismo pedido."
                        styleClass="section-description" wrapText="true"/>
             </VBox>
-            <Label text="Al finalizar o fallar, el stock se descuenta en una transacción MySQL. Los consumos por falla se estiman según las capas ingresadas."
-                   styleClass="bottom-hint" wrapText="true"/>
         </VBox>
     </content>
 </ScrollPane>

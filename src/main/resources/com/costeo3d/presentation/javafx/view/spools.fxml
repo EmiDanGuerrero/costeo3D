@@ -71,7 +71,7 @@
             </columns>
         </TableView>
         <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Label text="10 bobinas por página · Ordená haciendo clic en las columnas"
+            <Label text="10 bobinas por página · Ordenamiento por columnas"
                    styleClass="catalog-pagination-hint"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -81,6 +81,4 @@
                     styleClass="secondary-action" disable="true"/>
         </HBox>
     </VBox>
-    <Label text="E10.3 · Podés editar el color, activar y desactivar bobinas. Los pesos y consumos los gestiona Producción."
-           wrapText="true" styleClass="bottom-hint"/>
 </VBox>

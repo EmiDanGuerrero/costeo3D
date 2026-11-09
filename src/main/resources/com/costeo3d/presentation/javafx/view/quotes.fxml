@@ -20,7 +20,7 @@
         <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
         <Label text="PRESUPUESTOS" styleClass="eyebrow"/>
         <Label text="Calculadora y presupuestos" styleClass="section-title"/>
-        <Label text="Emití y consultá presupuestos, revisá sus valores históricos y gestioná sus estados."
+        <Label text="Emisión, consulta y seguimiento de presupuestos y sus estados."
                styleClass="section-description" wrapText="true"/>
     </VBox>
     <VBox spacing="12" styleClass="catalog-panel">
@@ -71,7 +71,7 @@
             </columns>
         </TableView>
         <HBox alignment="CENTER_RIGHT" spacing="10">
-            <Label text="10 presupuestos por página · Ordená desde los encabezados"
+            <Label text="10 presupuestos por página · Ordenamiento por columnas"
                    styleClass="catalog-pagination-hint"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -88,6 +88,4 @@
                   prefRowCount="6" prefHeight="145" maxHeight="145"
                   text="Seleccioná un presupuesto para ver sus detalles."/>
     </VBox>
-    <Label text="E11.2.1 · Emisión de un concepto/material con precio manual; conexión con CostCalculator pendiente."
-           styleClass="bottom-hint" wrapText="true"/>
 </VBox>

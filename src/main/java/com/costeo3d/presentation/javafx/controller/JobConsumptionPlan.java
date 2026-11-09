@@ -98,7 +98,7 @@ public final class JobConsumptionPlan {
             item = items.get(0);
             if (jobs.size() == 1) {
                 relevantJobs = List.of(job);
-            } else if (allJobsSameIdentifiedModel(jobs, job)) {
+            } else if (allJobsSameModel(jobs, job)) {
                 relevantJobs = List.copyOf(jobs);
             } else {
                 throw new IllegalArgumentException(
@@ -132,26 +132,28 @@ public final class JobConsumptionPlan {
                     + quantity + ".");
         }
 
-        int matchingJobs = relevantJobs.size();
+        int attempts = relevantJobs.size();
+        long failed = failedAttempts(relevantJobs);
+        // A failed attempt doesn't represent a new unit ordered. A replacement
+        // takes its place in the count of actual units/batches to print.
+        int currentJobs = Math.toIntExact(attempts - failed);
         int factor;
         String distribution;
-        if (matchingJobs == 1) {
+        if (currentJobs == 1) {
             factor = quantity;
-            distribution = "Una impresión para la tanda de " + quantity + " unidad(es).";
-        } else if (matchingJobs == quantity) {
+            distribution = "Un trabajo representa la tanda de " + quantity
+                    + " unidad(es); se excluyeron " + failed + " intento(s) fallido(s).";
+        } else if (currentJobs == quantity) {
             factor = 1;
-            distribution = "Consumo presupuestado por unidad.";
-        } else if (matchingJobs > quantity
-                && failedAttempts(relevantJobs) >= matchingJobs - quantity) {
-            factor = 1;
-            distribution = "Consumo por unidad; hay intentos fallidos registrados.";
+            distribution = "Consumo por unidad; se excluyeron " + failed
+                    + " intento(s) fallido(s).";
         } else {
             throw new IllegalArgumentException(
                     "El concepto del presupuesto #" + quote.getId() + " contempla "
-                    + quantity + " unidad(es), pero hay " + matchingJobs
-                    + " trabajo(s) asociados a este concepto. No se puede saber si cada "
-                    + "trabajo representa una unidad o parte de la tanda. "
-                    + "No se usarán gramos supuestos.");
+                    + quantity + " unidad(es), pero hay " + currentJobs
+                    + " trabajo(s) vigentes/finalizados y " + failed
+                    + " intento(s) fallido(s). No se puede inferir qué cantidad "
+                    + "representa cada trabajo; no se descontarán gramos supuestos.");
         }
 
         if (item.getMaterials() == null || item.getMaterials().isEmpty()) {
@@ -189,11 +191,13 @@ public final class JobConsumptionPlan {
         return quoteId != null && jobId != null && quoteId.equals(jobId);
     }
 
-    private static boolean allJobsSameIdentifiedModel(List<PrintJob> jobs, PrintJob selected) {
+    private static boolean allJobsSameModel(List<PrintJob> jobs, PrintJob selected) {
         Integer modelId = selected.getModel() == null ? null : selected.getModel().getId();
-        return modelId != null && jobs.stream().allMatch(other -> other != null
-                && other.getModel() != null
-                && modelId.equals(other.getModel().getId()));
+        // Con concepto único, los reintentos sin modelo de catálogo también
+        // son inequívocos si todos conservan el mismo identificador (o NULL).
+        return jobs.stream().allMatch(other -> other != null
+                && Objects.equals(modelId, other.getModel() == null
+                        ? null : other.getModel().getId()));
     }
 
     private static long failedAttempts(List<PrintJob> jobs) {

@@ -21,7 +21,7 @@
                 <padding><Insets top="23" right="28" bottom="23" left="28"/></padding>
                 <Label text="CONFIGURACIÓN" styleClass="eyebrow"/>
                 <Label text="Parámetros de costeo" styleClass="section-title"/>
-                <Label text="Guardá tarifas y costos estimados. No cambia presupuestos ya emitidos."
+                <Label text="Parámetros de cálculo para nuevos presupuestos. No modifica los ya emitidos."
                        styleClass="section-description" wrapText="true"/>
             </VBox>
             <VBox spacing="13" styleClass="catalog-panel">
@@ -37,8 +37,8 @@
                     <TextField fx:id="electricityRateField" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-field"/>
                     <TextField fx:id="averageWattsField" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-field"/>
                 </GridPane>
-                <Label text="Estos valores representan consumo y tarifa aproximados. IVA y cargos fijos no se añaden automáticamente."
-                       styleClass="bottom-hint" wrapText="true"/>
+                <Label text="Estimaciones de consumo eléctrico y tarifa. No se incorporan IVA ni cargos fijos automáticamente."
+                       styleClass="catalog-status" wrapText="true"/>
             </VBox>
             <VBox spacing="13" styleClass="catalog-panel">
                 <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
@@ -57,16 +57,16 @@
                     <TextField fx:id="maintenanceYearField" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-field"/>
                     <TextField fx:id="printHoursYearField" promptText="A definir" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="form-field"/>
                 </GridPane>
-                <Label text="Dejamos ambas estimaciones de horas vacías hasta que decidas los supuestos. No inventamos un costo horario."
-                       styleClass="bottom-hint" wrapText="true"/>
+                <Label text="Las horas de vida útil y de uso anual deben definirse para estimar los costos horarios correspondientes."
+                       styleClass="catalog-status" wrapText="true"/>
             </VBox>
             <VBox spacing="12" styleClass="catalog-panel">
                 <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
                 <Label text="Política comercial" styleClass="catalog-heading"/>
                 <Label text="Margen general por defecto (%)" styleClass="form-label"/>
                 <TextField fx:id="defaultMarginField" promptText="A definir (ej.: 20)" maxWidth="240" styleClass="form-field"/>
-                <Label text="Normal utiliza el margen general. Llavero y Grande pueden usar su propio margen; si lo dejás vacío, heredan el general."
-                       styleClass="bottom-hint" wrapText="true"/>
+                <Label text="Los márgenes específicos tienen prioridad sobre el general. Los campos vacíos utilizan el margen general."
+                       styleClass="catalog-status" wrapText="true"/>
                 <GridPane hgap="15" vgap="8">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="50"/>
@@ -82,8 +82,8 @@
                 <Label text="Precio mínimo por llavero ($/unidad, opcional)" styleClass="form-label"/>
                 <TextField fx:id="keychainMinimumField" promptText="Sin mínimo si queda vacío"
                            maxWidth="240" styleClass="form-field"/>
-                <Label text="El mínimo se aplica al precio unitario calculado de Llavero solo si supera el cálculo normal. En modo manual no se aplica automáticamente."
-                       styleClass="bottom-hint" wrapText="true"/>
+                <Label text="Se aplica si supera el precio unitario calculado para Llavero. No se aplica automáticamente en modo manual."
+                       styleClass="catalog-status" wrapText="true"/>
             </VBox>
             <VBox spacing="12" styleClass="catalog-panel">
                 <padding><Insets top="20" right="23" bottom="20" left="23"/></padding>
@@ -103,7 +103,7 @@
                     <Label fx:id="statusLabel" text="" wrapText="true" styleClass="catalog-status" HBox.hgrow="ALWAYS"/>
                     <Button text="Guardar configuración" onAction="#save" styleClass="home-action"/>
                 </HBox>
-                <Label fx:id="locationLabel" text="" wrapText="true" styleClass="bottom-hint"/>
+                <Label fx:id="locationLabel" text="" visible="false" managed="false" wrapText="true" styleClass="catalog-status"/>
             </VBox>
         </VBox>
     </content>

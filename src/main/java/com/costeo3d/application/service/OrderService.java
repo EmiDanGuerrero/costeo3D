@@ -80,17 +80,31 @@ public class OrderService {
                     "An order must contain at least one print job.");
         }
 
-        boolean allCompleted = printJobs.stream()
-                .allMatch(job ->
-                        job.getStatus() == PrintJobStatus.COMPLETED);
-
-        if (!allCompleted) {
+        if (!canMarkAsReady(printJobs)) {
             throw new BusinessValidationException(
-                    "All print jobs must be completed before "
-                    + "the order can be marked as ready.");
+                    "Para marcar el pedido como Listo se necesita al menos un "
+                    + "trabajo finalizado, sin trabajos pendientes o en proceso, "
+                    + "y cada intento fallido debe contar con un reintento posterior.");
         }
 
         order.markAsReady();
+    }
+
+    /** Fallas are historical attempts; they do not prevent a completed retry. */
+    public static boolean canMarkAsReady(List<PrintJob> jobs) {
+        if (jobs == null || jobs.isEmpty()
+                || jobs.stream().noneMatch(job -> job.getStatus() == PrintJobStatus.COMPLETED)
+                || jobs.stream().anyMatch(job -> job.getStatus() == PrintJobStatus.PENDING
+                        || job.getStatus() == PrintJobStatus.IN_PROGRESS)) {
+            return false;
+        }
+        // Every failed attempt must have its own recorded successor. Together
+        // with the lack of open jobs, every retry chain ends in COMPLETED.
+        return jobs.stream().filter(job -> job.getStatus() == PrintJobStatus.FAILED)
+                .allMatch(failed -> failed.getId() != null
+                        && jobs.stream().anyMatch(retry ->
+                                java.util.Objects.equals(retry.getRetryOfJobId(), failed.getId())
+                                && retry.getId() != null && retry.getId() > failed.getId()));
     }
 
     public void deliver(Order order)

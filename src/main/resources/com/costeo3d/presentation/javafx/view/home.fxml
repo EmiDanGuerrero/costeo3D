@@ -2,23 +2,87 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.costeo3d.presentation.javafx.controller.HomeController"
-      spacing="24">
-    <VBox spacing="13" styleClass="welcome-panel">
-        <padding><Insets top="35" right="36" bottom="35" left="36"/></padding>
-        <Label text="COSTEO 3D" styleClass="eyebrow"/>
-        <Label text="Inicio" styleClass="section-title"/>
-        <Label text="Bienvenido al sistema de costeo e inventario para impresión 3D."
-               wrapText="true" styleClass="section-description"/>
-        <Separator styleClass="panel-separator"/>
-        <Label text="Vista Inicio independiente · E9.3" styleClass="section-status"/>
-        <Button text="Explorar catálogos" onAction="#openCatalogs"
-                styleClass="home-action"/>
-    </VBox>
-    <Label text="Seleccioná una sección del menú lateral para navegar."
-           styleClass="bottom-hint"/>
-</VBox>
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1"
+            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            styleClass="models-scroll-root"
+            fx:controller="com.costeo3d.presentation.javafx.controller.HomeController">
+    <content>
+        <VBox spacing="17" styleClass="dashboard-page">
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="dashboard-header">
+                <VBox spacing="7" HBox.hgrow="ALWAYS">
+                    <Label text="PANEL GENERAL" styleClass="eyebrow"/>
+                    <Label text="Inicio" styleClass="section-title"/>
+                    <Label text="Una vista rápida del estado actual de tu taller."
+                           wrapText="true" styleClass="section-description"/>
+                </VBox>
+                <Button fx:id="refreshButton" text="Actualizar" onAction="#refresh"
+                        styleClass="secondary-action"/>
+            </HBox>
+
+            <GridPane hgap="14" vgap="14">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS"/>
+                </columnConstraints>
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="10"
+                      styleClass="dashboard-kpi-card">
+                    <Label text="Pedidos activos" styleClass="dashboard-kpi-title"/>
+                    <Label fx:id="activeOrdersValue" text="—" styleClass="dashboard-kpi-value"/>
+                    <Label text="Pendientes o en producción" wrapText="true"
+                           styleClass="dashboard-kpi-caption"/>
+                    <Button text="Ver pedidos" styleClass="dashboard-link-button" onAction="#openOrders"/>
+                </VBox>
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="10"
+                      styleClass="dashboard-kpi-card">
+                    <Label text="Trabajos en curso" styleClass="dashboard-kpi-title"/>
+                    <Label fx:id="inProgressValue" text="—" styleClass="dashboard-kpi-value"/>
+                    <Label text="Impresiones en proceso" wrapText="true"
+                           styleClass="dashboard-kpi-caption"/>
+                    <Button text="Ver producción" styleClass="dashboard-link-button" onAction="#openProduction"/>
+                </VBox>
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10"
+                      styleClass="dashboard-kpi-card">
+                    <Label text="Bobinas con stock bajo" styleClass="dashboard-kpi-title"/>
+                    <Label fx:id="lowStockValue" text="—" styleClass="dashboard-kpi-value"/>
+                    <Label text="Activas · 200 g o menos" wrapText="true"
+                           styleClass="dashboard-kpi-caption"/>
+                    <Button text="Ver bobinas" styleClass="dashboard-link-button" onAction="#openSpools"/>
+                </VBox>
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="10"
+                      styleClass="dashboard-kpi-card">
+                    <Label text="Mermas acumuladas" styleClass="dashboard-kpi-title"/>
+                    <Label fx:id="wasteGramsValue" text="—" styleClass="dashboard-kpi-value"/>
+                    <Label fx:id="wasteDetailLabel" text="Consumo de impresiones fallidas"
+                           wrapText="true" styleClass="dashboard-kpi-caption"/>
+                    <Button text="Ver producción" styleClass="dashboard-link-button" onAction="#openProduction"/>
+                </VBox>
+            </GridPane>
+
+            <VBox spacing="12" styleClass="dashboard-alerts-panel">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Atención al inventario" styleClass="dashboard-panel-heading"/>
+                        <Label fx:id="lowStockDescription"
+                               text="Bobinas activas con 200,00 g o menos disponibles."
+                               wrapText="true" styleClass="dashboard-muted"/>
+                    </VBox>
+                    <Button text="Abrir bobinas" styleClass="secondary-action" onAction="#openSpools"/>
+                </HBox>
+                <VBox fx:id="spoolAlertsBox" spacing="7">
+                    <Label text="Consultando bobinas..." styleClass="dashboard-muted"/>
+                </VBox>
+            </VBox>
+
+            <Label fx:id="dashboardStatus" text="Actualizando indicadores..."
+                   wrapText="true" styleClass="dashboard-status"/>
+        </VBox>
+    </content>
+</ScrollPane>

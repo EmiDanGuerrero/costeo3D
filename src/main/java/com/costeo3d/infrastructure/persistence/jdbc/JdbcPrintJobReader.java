@@ -19,7 +19,8 @@ import com.costeo3d.domain.model.PrintJob;
 final class JdbcPrintJobReader {
 
     private static final String SELECT_SQL = """
-            SELECT t.id_trabajo, t.id_pedido, t.fecha_creacion, t.fecha_inicio,
+            SELECT t.id_trabajo, t.id_pedido, t.id_trabajo_origen,
+                   t.fecha_creacion, t.fecha_inicio,
                    t.fecha_fin, t.estado, t.tiempo_estimado_minutos,
                    m.id_modelo, m.nombre, m.imagen_referencia, m.plataforma_origen,
                    m.gramos_estimados, m.tiempo_estimado_minutos AS modelo_tiempo,
@@ -107,19 +108,22 @@ final class JdbcPrintJobReader {
                         rs.getString("plataforma_origen"),
                         rs.getBigDecimal("gramos_estimados"),
                         rs.getInt("modelo_tiempo"), rs.getBoolean("modelo_activo"));
+                int sourceId = rs.getInt("id_trabajo_origen");
+                Integer origin = rs.wasNull() ? null : sourceId;
                 return Optional.of(new JobRow(rs.getInt("id_trabajo"), associatedOrder,
                         model, rs.getTimestamp("fecha_creacion").toLocalDateTime(),
                         dateOrNull(rs.getTimestamp("fecha_inicio")),
                         dateOrNull(rs.getTimestamp("fecha_fin")),
                         fromDbStatus(rs.getString("estado")),
-                        rs.getInt("tiempo_estimado_minutos")));
+                        rs.getInt("tiempo_estimado_minutos"), origin));
             }
         }
     }
 
     private static PrintJob toJob(JobRow row, Order order) {
         return new PrintJob(row.id(), order, row.model(), row.createdAt(),
-                row.startedAt(), row.finishedAt(), row.status(), row.minutes());
+                row.startedAt(), row.finishedAt(), row.status(), row.minutes(),
+                row.retryOfJobId());
     }
 
     private static LocalDateTime dateOrNull(Timestamp date) {
@@ -141,5 +145,6 @@ final class JdbcPrintJobReader {
 
     private record JobRow(int id, Integer orderId, Model3D model,
             LocalDateTime createdAt, LocalDateTime startedAt,
-            LocalDateTime finishedAt, PrintJobStatus status, int minutes) { }
+            LocalDateTime finishedAt, PrintJobStatus status, int minutes,
+            Integer retryOfJobId) { }
 }

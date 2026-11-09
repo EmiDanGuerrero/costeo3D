@@ -29,7 +29,7 @@ public interface ProductionFinalizationPort {
 
     /** Resultado confirmado, con IDs y pesos restantes obtenidos de la transaccion. */
     record Completion(PrintJob finishedJob, List<Integer> consumptionIds,
-            Map<Integer, BigDecimal> remainingGramsBySpool) {
+            Map<Integer, BigDecimal> remainingGramsBySpool, Integer retryJobId) {
         public Completion {
             Objects.requireNonNull(finishedJob, "Finished job is required.");
             consumptionIds = List.copyOf(consumptionIds);

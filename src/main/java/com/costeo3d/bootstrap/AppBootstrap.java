@@ -2,6 +2,7 @@ package com.costeo3d.bootstrap;
 
 import com.costeo3d.application.port.ProductionFinalizationPort;
 import com.costeo3d.application.service.CatalogService;
+import com.costeo3d.application.service.HomeDashboardService;
 import com.costeo3d.application.service.OrderService;
 import com.costeo3d.application.service.PersistentOrderService;
 import com.costeo3d.application.service.PersistentProductionService;
@@ -22,6 +23,7 @@ import com.costeo3d.infrastructure.persistence.dao.QuoteDao;
 import com.costeo3d.infrastructure.persistence.dao.SpoolDao;
 import com.costeo3d.infrastructure.persistence.jdbc.JdbcConnectionFactory;
 import com.costeo3d.infrastructure.persistence.jdbc.JdbcCustomerDao;
+import com.costeo3d.infrastructure.persistence.jdbc.JdbcHomeDashboardReader;
 import com.costeo3d.infrastructure.persistence.jdbc.JdbcEstimatedWasteDao;
 import com.costeo3d.infrastructure.persistence.jdbc.JdbcMaterialDao;
 import com.costeo3d.infrastructure.persistence.jdbc.JdbcModel3DDao;
@@ -67,6 +69,9 @@ public final class AppBootstrap {
         PersistentWasteEstimator waste = new PersistentWasteEstimator(
                 new WasteEstimator(), printJobDao, wasteDao);
 
-        return new AppServices(catalogs, quotes, orders, production, waste);
+        HomeDashboardService dashboard = new HomeDashboardService(
+                new JdbcHomeDashboardReader(factory));
+
+        return new AppServices(catalogs, quotes, orders, production, waste, dashboard);
     }
 }

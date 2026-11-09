@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,8 +30,24 @@ public final class JdbcProductionTransaction {
     private static final Logger LOGGER =
             Logger.getLogger(JdbcProductionTransaction.class.getName());
     private static final String LOCK_JOB = """
-            SELECT fecha_creacion, fecha_inicio, estado, tiempo_estimado_minutos
+            SELECT id_pedido, id_trabajo_origen, fecha_creacion, fecha_inicio,
+                   estado, tiempo_estimado_minutos
             FROM trabajo_impresion WHERE id_trabajo = ? FOR UPDATE
+            """;
+    // Lock the order before its jobs to serialize status changes and retries.
+    private static final String LOCK_ORDER = """
+            SELECT estado FROM pedido WHERE id_pedido = ? FOR UPDATE
+            """;
+    private static final String INSERT_RETRY = """
+            INSERT INTO trabajo_impresion
+                (id_pedido, id_modelo, fecha_creacion, fecha_inicio,
+                 fecha_fin, estado, tiempo_estimado_minutos, id_trabajo_origen)
+            SELECT t.id_pedido, t.id_modelo, ?, NULL, NULL, 'PENDIENTE',
+                   t.tiempo_estimado_minutos, t.id_trabajo
+            FROM trabajo_impresion AS t
+            INNER JOIN pedido AS p ON p.id_pedido = t.id_pedido
+            WHERE t.id_trabajo = ? AND t.estado = 'FALLIDO'
+                  AND p.estado = 'EN_PRODUCCION'
             """;
     private static final String FINISH_JOB = """
             UPDATE trabajo_impresion SET estado = ?, fecha_fin = ?
@@ -87,9 +104,15 @@ public final class JdbcProductionTransaction {
             validateFailureConsumption(estimate, consumptions);
         }
 
+        boolean createRetry = target == PrintJobStatus.FAILED && job.getOrder() != null;
         try (Connection connection = connectionFactory.openConnection()) {
             connection.setAutoCommit(false);
             try {
+                // Para trabajos con pedido, creamos reintento en la misma transacción.
+                // Los trabajos antiguos sin pedido conservan la semántica previa.
+                if (createRetry) {
+                    lockOrderForFailure(job, connection);
+                }
                 PrintJob finished = lockAndFinish(job, finishedAt, target, connection);
                 Map<Integer, BigDecimal> remaining =
                         JdbcProductionStock.discount(connection, required);
@@ -110,7 +133,10 @@ public final class JdbcProductionTransaction {
                         throw new SQLException("Print job could not be finalized.");
                     }
                 }
-                Result result = new Result(finished, List.copyOf(ids), Map.copyOf(remaining));
+                Integer retryJobId = createRetry
+                        ? insertPendingRetry(connection, job.getId(), finishedAt) : null;
+                Result result = new Result(finished, List.copyOf(ids),
+                        Map.copyOf(remaining), retryJobId);
                 connection.commit();
                 return result;
             } catch (SQLException | BusinessRuleException | RuntimeException error) {
@@ -126,6 +152,44 @@ public final class JdbcProductionTransaction {
                     "Production transaction failed (SQLState: {0}, vendor code: {1}).",
                     new Object[] {e.getSQLState(), e.getErrorCode()});
             throw new PersistenceException("Cannot finalize print job.", e);
+        }
+    }
+
+    /** The order remains in production; a failure generates a pending retry. */
+    private static void lockOrderForFailure(PrintJob job, Connection connection)
+            throws SQLException, BusinessValidationException {
+        Integer orderId = job.getOrder() == null ? null : job.getOrder().getId();
+        if (orderId == null || orderId <= 0) {
+            throw new BusinessValidationException(
+                    "La falla requiere un pedido persistido asociado al trabajo.");
+        }
+        try (PreparedStatement lock = connection.prepareStatement(LOCK_ORDER)) {
+            lock.setInt(1, orderId);
+            try (ResultSet result = lock.executeQuery()) {
+                if (!result.next() || !"EN_PRODUCCION".equals(result.getString("estado"))) {
+                    throw new BusinessValidationException(
+                            "El pedido debe estar En producción para registrar una falla.");
+                }
+            }
+        }
+    }
+
+    /** Called only after status=FALLIDO; retry is included in the same COMMIT. */
+    private static int insertPendingRetry(Connection connection, int failedJobId,
+            LocalDateTime createdAt) throws SQLException {
+        try (PreparedStatement insert = connection.prepareStatement(
+                INSERT_RETRY, Statement.RETURN_GENERATED_KEYS)) {
+            insert.setTimestamp(1, Timestamp.valueOf(createdAt));
+            insert.setInt(2, failedJobId);
+            if (insert.executeUpdate() != 1) {
+                throw new SQLException("No se pudo crear el reintento pendiente.");
+            }
+            try (ResultSet generated = insert.getGeneratedKeys()) {
+                if (!generated.next()) {
+                    throw new SQLException("El reintento no devolvió su ID.");
+                }
+                return generated.getInt(1);
+            }
         }
     }
 
@@ -160,11 +224,20 @@ public final class JdbcProductionTransaction {
                     throw new InvalidStateTransitionException(
                             "Only a print job in progress can be finished.");
                 }
+                if (target == PrintJobStatus.FAILED) {
+                    Integer orderId = job.getOrder() == null ? null : job.getOrder().getId();
+                    Integer lockedOrderId = (Integer) row.getObject("id_pedido");
+                    if (!Objects.equals(orderId, lockedOrderId)) {
+                        throw new BusinessValidationException(
+                                "El trabajo cambió de pedido. Actualizá Producción.");
+                    }
+                }
                 Timestamp start = row.getTimestamp("fecha_inicio");
                 PrintJob snapshot = new PrintJob(job.getId(), job.getOrder(), job.getModel(),
                         row.getTimestamp("fecha_creacion").toLocalDateTime(),
                         start == null ? null : start.toLocalDateTime(), null,
-                        PrintJobStatus.IN_PROGRESS, row.getInt("tiempo_estimado_minutos"));
+                        PrintJobStatus.IN_PROGRESS, row.getInt("tiempo_estimado_minutos"),
+                        (Integer) row.getObject("id_trabajo_origen"));
                 if (target == PrintJobStatus.COMPLETED) {
                     snapshot.complete(date);
                 } else {
@@ -177,5 +250,5 @@ public final class JdbcProductionTransaction {
 
     /** No modifica los objetos originales: E8 coordinara el estado en memoria. */
     public record Result(PrintJob finishedJob, List<Integer> consumptionIds,
-            Map<Integer, BigDecimal> remainingGramsBySpool) { }
+            Map<Integer, BigDecimal> remainingGramsBySpool, Integer retryJobId) { }
 }

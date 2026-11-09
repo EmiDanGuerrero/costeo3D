@@ -78,7 +78,7 @@
             </columns>
         </TableView>
         <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Label text="10 materiales por página · Ordená haciendo clic en las columnas"
+            <Label text="10 materiales por página · Ordenamiento por columnas"
                    styleClass="catalog-pagination-hint" HBox.hgrow="ALWAYS"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -88,6 +88,4 @@
                     styleClass="secondary-action" disable="true"/>
         </HBox>
     </VBox>
-    <Label text="E10.2 · La búsqueda, los filtros y el orden actúan sobre los materiales cargados; Actualizar consulta MySQL."
-           wrapText="true" styleClass="bottom-hint"/>
 </VBox>

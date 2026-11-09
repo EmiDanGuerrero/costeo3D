@@ -61,7 +61,6 @@
                 <graphic><SVGPath content="M12 2 L14 5 L18 5 L19 9 L22 12 L19 15 L18 19 L14 19 L12 22 L10 19 L6 19 L5 15 L2 12 L5 9 L6 5 L10 5 Z M12 8 A4 4 0 1 0 12 16 A4 4 0 1 0 12 8" styleClass="nav-icon"/></graphic>
             </Button>
             <Region VBox.vgrow="ALWAYS"/>
-            <Label text="Costeo 3D · E11" styleClass="sidebar-footer"/>
         </VBox>
     </left>
     <center>
@@ -74,7 +73,7 @@
             </HBox>
             <!-- Las vistas FXML se cargarán aquí, conservando el menú y la cabecera. -->
             <StackPane fx:id="contentArea" alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
-                <!-- Otras secciones conservan su presentación provisional hasta E10/E11. -->
+                <!-- Contenedor de respaldo para secciones que no carguen una vista independiente. -->
                 <VBox fx:id="placeholderPage" spacing="24" managed="false" visible="false">
                     <VBox spacing="13" styleClass="welcome-panel">
                         <padding><Insets top="35" right="36" bottom="35" left="36"/></padding>
@@ -85,8 +84,6 @@
                         <Separator styleClass="panel-separator"/>
                         <Label fx:id="sectionStatus" text="Próxima etapa" styleClass="section-status"/>
                     </VBox>
-                    <Label text="Seleccioná una sección del menú lateral para navegar."
-                           styleClass="bottom-hint"/>
                 </VBox>
             </StackPane>
         </VBox>

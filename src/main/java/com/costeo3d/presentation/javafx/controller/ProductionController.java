@@ -302,6 +302,9 @@ public final class ProductionController {
         } else if (canComplete(job)) {
             jobActionHintLabel.setText("El trabajo está En proceso. Podés finalizarlo "
                     + "o registrar una falla con las capas del slicer.");
+        } else if (job.getStatus() == PrintJobStatus.FAILED) {
+            jobActionHintLabel.setText("Intento fallido registrado. Seleccioná el nuevo trabajo "
+                    + "pendiente del mismo pedido para iniciar el reintento manualmente.");
         } else if (job.getStatus() != PrintJobStatus.PENDING) {
             jobActionHintLabel.setText("El trabajo ya fue cerrado o su pedido no está En producción.");
         } else if (job.getOrder() == null
@@ -465,6 +468,9 @@ public final class ProductionController {
                 StringBuilder detail = new StringBuilder("Se registró la falla y la merma "
                         + "por capas junto a " + result.consumptionIds().size()
                         + " consumo(s). Se descontó el stock de MySQL.\n\n"
+                        + "Se creó el trabajo #" + result.retryJobId()
+                        + " como PENDIENTE para el mismo pedido.\n"
+                        + "Inicialo manualmente desde Producción.\n\n"
                         + "Gramos restantes por bobina:\n");
                 result.remainingGramsBySpool().entrySet().stream()
                         .sorted(java.util.Map.Entry.comparingByKey())
@@ -478,7 +484,10 @@ public final class ProductionController {
                 success.setHeaderText("Falla y descuento confirmados");
                 success.initOwner(jobsTable.getScene().getWindow());
                 success.showAndWait();
-                restoreSelectedId = jobId;
+                searchField.clear();
+                statusFilterCombo.setValue(ALL_STATES);
+                restoreSelectedId = result.retryJobId() == null ? jobId : result.retryJobId();
+                pageIndex = 0;
                 reloadJobs();
             }
         } catch (IOException | IllegalStateException | IllegalArgumentException exception) {
@@ -501,6 +510,9 @@ public final class ProductionController {
         text.append("Estado del pedido: ")
                 .append(order == null ? "—" : orderStatusText(order.getStatus())).append('\n');
         text.append("Modelo: ").append(modelName(job)).append('\n');
+        if (job.getRetryOfJobId() != null) {
+            text.append("Reintento del trabajo #").append(job.getRetryOfJobId()).append('\n');
+        }
         text.append("Duración estimada: ").append(job.getEstimatedPrintTimeMinutes())
                 .append(" minutos\n");
         text.append("Creado: ").append(formatDate(job.getCreatedAt())).append('\n');

@@ -299,8 +299,7 @@ public final class OrdersController {
         return switch (action) {
             case START -> order.getStatus() == OrderStatus.PENDING && !jobs.isEmpty();
             case READY -> order.getStatus() == OrderStatus.IN_PRODUCTION
-                    && !jobs.isEmpty()
-                    && jobs.stream().allMatch(job -> job.getStatus() == PrintJobStatus.COMPLETED);
+                    && com.costeo3d.application.service.OrderService.canMarkAsReady(jobs);
             case DELIVER -> order.getStatus() == OrderStatus.READY;
             case CANCEL -> order.getStatus() == OrderStatus.PENDING
                     && jobs.stream().allMatch(job -> job.getStatus() == PrintJobStatus.PENDING);

@@ -23,7 +23,7 @@
                 <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
                 <Label text="CATÁLOGOS" styleClass="eyebrow"/>
                 <Label text="Modelos 3D" styleClass="section-title"/>
-                <Label text="Explorá tu biblioteca de modelos y sus estimaciones de impresión."
+                <Label text="Catálogo de modelos 3D con sus estimaciones de impresión."
                        wrapText="true" styleClass="section-description"/>
             </VBox>
             <VBox spacing="14" styleClass="catalog-panel">
@@ -76,7 +76,7 @@
                     </VBox>
                 </StackPane>
                 <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Label text="9 modelos por página · Seleccioná una tarjeta para editarla o cambiar su estado"
+                    <Label text="9 modelos por página · Edición mediante selección de tarjetas"
                            styleClass="catalog-pagination-hint"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -86,8 +86,6 @@
                             styleClass="secondary-action" disable="true"/>
                 </HBox>
             </VBox>
-            <Label text="E10.4.4 · Podés editar los modelos y activar o desactivar su disponibilidad."
-                   wrapText="true" styleClass="bottom-hint"/>
         </VBox>
     </content>
 </ScrollPane>

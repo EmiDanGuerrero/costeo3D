@@ -25,7 +25,7 @@
                 <padding><Insets top="21" right="28" bottom="21" left="28"/></padding>
                 <Label text="PEDIDOS" styleClass="eyebrow"/>
                 <Label text="Seguimiento de pedidos" styleClass="section-title"/>
-                <Label text="Consultá pedidos registrados, su presupuesto de origen y los trabajos de impresión asociados."
+                <Label text="Seguimiento de pedidos, presupuestos de origen y trabajos asociados."
                        styleClass="section-description" wrapText="true"/>
             </VBox>
             <VBox spacing="12" styleClass="catalog-panel">
@@ -68,7 +68,7 @@
                     </columns>
                 </TableView>
                 <HBox alignment="CENTER_RIGHT" spacing="10">
-                    <Label text="10 pedidos por página · Ordená desde los encabezados"
+                    <Label text="10 pedidos por página · Ordenamiento por columnas"
                            styleClass="catalog-pagination-hint"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button fx:id="previousPageButton" text="Anterior" onAction="#previousPage"
@@ -109,7 +109,7 @@
                     <Button fx:id="editJobButton" text="Editar planificación" onAction="#editSelectedJob"
                             styleClass="secondary-action" disable="true"/>
                 </HBox>
-                <Label text="Modelo y minutos estimados pueden modificarse únicamente antes de iniciar Producción."
+                <Label text="El modelo y la duración estimada solo pueden modificarse antes de iniciar la producción."
                        styleClass="section-description" wrapText="true"/>
                 <TableView fx:id="jobsTable" styleClass="catalog-table">
                     <columns>
@@ -122,8 +122,6 @@
                 <Label fx:id="jobHintLabel" text="Seleccioná un trabajo de impresión."
                        styleClass="catalog-status" wrapText="true"/>
             </VBox>
-            <Label text="E11.3.4 · Los estados de pedido se gestionan aquí; el inicio y cierre de trabajos y consumos se gestionan en Producción."
-                   styleClass="bottom-hint" wrapText="true"/>
         </VBox>
     </content>
 </ScrollPane>

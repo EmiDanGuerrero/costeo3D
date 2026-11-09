@@ -42,6 +42,6 @@ public final class JdbcProductionFinalizationAdapter
 
     private static Completion toCompletion(JdbcProductionTransaction.Result result) {
         return new Completion(result.finishedJob(), result.consumptionIds(),
-                result.remainingGramsBySpool());
+                result.remainingGramsBySpool(), result.retryJobId());
     }
 }

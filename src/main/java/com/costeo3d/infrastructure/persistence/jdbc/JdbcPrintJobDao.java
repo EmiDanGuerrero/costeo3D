@@ -27,8 +27,8 @@ public final class JdbcPrintJobDao implements PrintJobDao {
     private static final String INSERT_SQL = """
             INSERT INTO trabajo_impresion
                 (id_pedido, id_modelo, fecha_creacion, fecha_inicio,
-                 fecha_fin, estado, tiempo_estimado_minutos)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+                 fecha_fin, estado, tiempo_estimado_minutos, id_trabajo_origen)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     private static final String UPDATE_SQL = """
@@ -74,6 +74,7 @@ public final class JdbcPrintJobDao implements PrintJobDao {
         try (PreparedStatement statement = connection.prepareStatement(
                 INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             setFields(statement, job);
+            statement.setObject(8, job.getRetryOfJobId(), Types.INTEGER);
             statement.executeUpdate();
             try (ResultSet keys = statement.getGeneratedKeys()) {
                 if (!keys.next()) {
@@ -81,7 +82,8 @@ public final class JdbcPrintJobDao implements PrintJobDao {
                 }
                 return new PrintJob(keys.getInt(1), job.getOrder(), job.getModel(),
                         job.getCreatedAt(), job.getStartedAt(), job.getFinishedAt(),
-                        job.getStatus(), job.getEstimatedPrintTimeMinutes());
+                        job.getStatus(), job.getEstimatedPrintTimeMinutes(),
+                        job.getRetryOfJobId());
             }
         }
     }

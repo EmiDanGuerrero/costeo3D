@@ -305,7 +305,9 @@ public final class JobFailureController {
                 + "Merma estimada: " + format(snapshot.totalEstimatedWaste()) + " g\n"
                 + "Bobinas: " + consumptions.size() + "\n\n"
                 + "Se guardarán la falla, sus consumos y el descuento de stock. "
-                + "Esta operación no puede deshacerse desde la pantalla.",
+                + "También se creará un nuevo trabajo PENDIENTE para el mismo pedido. "
+                + "Deberás iniciarlo manualmente. Esta operación no puede deshacerse "
+                + "desde la pantalla.",
                 ButtonType.OK, ButtonType.CANCEL);
         confirmation.setTitle("Registrar falla — Costeo 3D");
         confirmation.setHeaderText("¿Confirmás la falla y el descuento estimado?");

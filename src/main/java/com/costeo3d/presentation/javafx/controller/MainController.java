@@ -52,7 +52,8 @@ public final class MainController {
     private void showHome() {
         Parent view = loadView("home.fxml", controllerType -> {
             if (controllerType == HomeController.class) {
-                return new HomeController(this::showCatalogs);
+                return new HomeController(services.dashboard(), this::showOrders,
+                        this::showProduction, this::showSpools);
             }
             throw new IllegalArgumentException(
                     "Controlador JavaFX no registrado: " + controllerType.getName());
